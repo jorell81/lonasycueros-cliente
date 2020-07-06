@@ -1,0 +1,63 @@
+#themecolors a {
+    cursor: pointer;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.is-invalid .form-control {
+    border-color: red !important;
+    color: red !important;
+}
+
+.table .thead-dark th {
+    color: #fff;
+    background-color: #212529;
+    border-color: #32383e;
+}
+
+.page-item.active .page-link {
+    z-index: 2;
+    color: #fff;
+    background-color: #7460ee;
+    border: 1px solid #ddd;
+}
+
+.table-responsive {
+    max-height: 55vh;
+    overflow: auto;
+    margin-bottom: 5px !Important;
+}
+
+.mr-25 {
+    margin-right: 25px;
+}
+
+@media (max-width: 768px) {
+    .noresponsive {
+        display: none !important;
+    }
+    h3 {
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 769px) {
+    .responsive {
+        display: none !important;
+    }
+}
+
+li {
+    list-style: none;
+}
+
+.faSearch {
+    display: inline-block;
+    position: fixed;
+    right: 105px;
+    font-size: 25px;
+    margin-top: 5px;
+    color: #bbb;
+}

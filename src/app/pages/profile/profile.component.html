@@ -1,0 +1,35 @@
+<div class="row animated fadeIn">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <form [formGroup]="forma" class="form p-t-20" (ngSubmit)="actualizarUsuario()">
+                    <div class="form-group">
+                        <label for="exampleInputuname">Nombre</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="ti-user"></i></div>
+                            <input formControlName="nombre" name="nombre" type="text" class="form-control" placeholder="Nombre" [class.is-invalid]="nombreNoValido">
+                        </div>
+                        <small *ngIf="nombreNoValido" class="text-danger">El campo Nombre es requerido</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputuname">Apellido</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="ti-user"></i></div>
+                            <input formControlName="apellido" name="apellido" type="text" class="form-control" placeholder="Apellido" [class.is-invalid]="apellidoNoValido">
+                        </div>
+                        <small *ngIf="apellidoNoValido" class="text-danger">El campo Apellido es requerido</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Correo</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="ti-email"></i></div>
+                            <input formControlName="email" name="email" type="email" class="form-control" placeholder="Correo Electrónico" [class.is-invalid]="emailNoValido">
+                        </div>
+                        <small *ngIf="emailNoValido" class="text-danger">El campo Correo Electrónico es requerido</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block waves-effect waves-light m-r-10"><i class="fa fa-save"></i> Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

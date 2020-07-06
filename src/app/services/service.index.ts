@@ -1,0 +1,12 @@
+export { SubCategoriaService } from './subCategoria/sub-categoria.service';
+export { BuscadorService } from './buscador/buscador.service';
+export { CategoriaService } from './categoria/categoria.service';
+export { LoginGuard } from './guards/login.guard';
+export { UsuarioService } from './usuario/usuario.service';
+export { SettingsService } from './settings/settings.service';
+export { SharedService } from './shared/shared.service';
+export { SidebarService } from './shared/sidebar.service';
+
+
+
+

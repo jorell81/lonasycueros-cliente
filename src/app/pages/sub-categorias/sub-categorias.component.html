@@ -1,0 +1,118 @@
+<div class="row animated fadeIn">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+
+                                    <div class="col-lg-9">
+                                        <select class="form-control" style="width: auto" name="itemsPagina" [(ngModel)]="itemsPagina">
+                                              <option [ngValue]="10">10 por pagina</option>
+                                              <option [ngValue]="20">20 por pagina</option>
+                                              <option [ngValue]="30">30 por pagina</option>
+                                            </select>
+                                        <br>
+                                    </div>
+
+                                    <div class="col-lg-3 text-right">
+                                        <button (click)=agregarSubCategoria(content) type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                            <li class="fa fa-plus responsive"></li>
+                                            <li class="noresponsive"><i class="fa fa-plus"></i> Agregar</li>
+                                            
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <br>
+                                <div *ngIf="subcategorias.length === 0" class="alert alert-info " role="alert ">
+                                    <h4 class="alert-heading ">SUB CATEGORÍAS</h4>
+                                    <p>No hay sub categorias almacenadas. Por favor agregue sub categorias.</p>
+                                </div>
+                                <div *ngIf="subcategorias.length > 0" class="table-responsive">
+                                    <table class=" table table-hover ">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th scope="col ">Nombre</th>
+                                                <th scope="col ">Descripcion</th>
+                                                <th scope="col ">Categoria</th>
+                                                <th scope="col " width="150px ">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngIf="subcategorias.length > 0">
+                                            <tr>
+                                                <td colspan="5">
+                                                    <div class="form-group" style="margin-bottom: 0;">
+                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter"><i class="fa fa-search faSearch"> {{ cantBusqueda }} </i>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr *ngFor="let item of globales.Lista(subcategorias,pagina,itemsPagina); let i = index">
+                                                <td> {{ i + 1 }} </td>
+                                                <td>{{ item.nombre }}</td>
+                                                <td>{{ item.descripcion}}</td>
+                                                <td>{{ item.idCategoria.nombre }} </td>
+                                                <td>
+                                                    <button (click)="actualizarSubCategoria( this.item ); open(content)" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
+                                                    <button (click)="eliminarSubCategoria( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <ngb-pagination *ngIf="subcategorias.length > 0" [maxSize]="5" class="right" [collectionSize]="subcategorias.length" [(page)]="pagina" [pageSize]="itemsPagina">
+                                </ngb-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ TituloModal }}</h4>
+        <button type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body ">
+        <form [formGroup]="forma">
+            <div class="form-group ">
+                <label class="col-6 col-form-label ">Nombre Sub Categoría</label>
+                <div class="col ">
+                    <input class="form-control " type="text " placeholder="Nombre Sub Categoría" formControlName="nombre" [class.is-invalid]="nombreNoValido">
+                    <small *ngIf="nombreNoValido" class="text-danger ">El campo Nombre Sub Categoria es requerido</small>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="col-2 col-form-label ">Descripción</label>
+                <div class="col ">
+                    <input class="form-control " type="text " placeholder="Descripción de la sub categoría" formControlName="descripcion" [class.is-invalid]="descripcionNoValido">
+                    <small *ngIf="descripcionNoValido" class="text-danger ">El campo Descripción Categoria es requerido</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-2 col-form-label">Categorías</label>
+                <div class="col">
+                    <!-- <ng-select placeholder="Seleccione una categoría..." bindLabel="nombre" bindValue="_id" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido">
+                    </ng-select> -->
+                    <!-- <select class="form-control" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido" placeholder="Categorias">
+                        <option *ngFor="let categoria of categorias" [ngValue]="categoria._id" [disabled]="categorias.length === 0">{{ categoria.nombre }} </option>
+                    </select> -->
+                    <small *ngIf="idCategoriaNoValido" class="form-text text-danger">El campo Categoría es requerido</small>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer ">
+        <button (click)=crearSubCategoria() type=" button " class="btn btn-primary " data-dismiss="modal ">Guardar</button>
+        <button (click)="cerrarModal()" type="button " class="btn btn-secondary ">Cancelar</button>
+    </div>
+</ng-template>
