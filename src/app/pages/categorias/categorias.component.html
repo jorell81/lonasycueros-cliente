@@ -44,8 +44,9 @@
                                         <tbody *ngIf="categorias.length > 0">
                                             <tr>
                                                 <td colspan="4">
-                                                    <div class="form-group" style="margin-bottom: 0;">
-                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter"><i class="fa fa-search faSearch"> {{ cantBusqueda }} </i>
+                                                    <div class="input-group" style="margin-bottom: 0;">
+                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter">
+                                                        <span class="input-group-addon"><i> {{ cantBusqueda }} </i></span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -76,9 +77,10 @@
 <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ TituloModal }}</h4>
-        <button type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <button type="button" class="btn btn-secondary" aria-label="Close" (click)="cerrarModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <button [hidden]="botonOculto" type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')"></button>
     </div>
     <div class="modal-body ">
         <form [formGroup]="forma">

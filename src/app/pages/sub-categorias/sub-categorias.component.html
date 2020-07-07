@@ -45,8 +45,12 @@
                                         <tbody *ngIf="subcategorias.length > 0">
                                             <tr>
                                                 <td colspan="5">
-                                                    <div class="form-group" style="margin-bottom: 0;">
-                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter"><i class="fa fa-search faSearch"> {{ cantBusqueda }} </i>
+                                                    <!-- <div class="form-group" style="margin-bottom: 0;">
+                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter"><span class="input-group-addon"><i class="glyphicon glyphicon-search">00.0</i></span>
+                                                    </div> -->
+                                                    <div class="input-group">
+                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter" />
+                                                        <span class="input-group-addon"><i> {{ cantBusqueda }} </i></span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -78,9 +82,10 @@
 <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ TituloModal }}</h4>
-        <button type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <button type="button" class="btn btn-secondary" aria-label="Close" (click)="cerrarModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <button [hidden]="botonOculto" type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')"></button>
     </div>
     <div class="modal-body ">
         <form [formGroup]="forma">
@@ -101,11 +106,10 @@
             <div class="form-group">
                 <label class="col-2 col-form-label">Categorías</label>
                 <div class="col">
-                    <!-- <ng-select placeholder="Seleccione una categoría..." bindLabel="nombre" bindValue="_id" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido">
-                    </ng-select> -->
-                    <!-- <select class="form-control" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido" placeholder="Categorias">
+                    <select class="form-control" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido" placeholder="Categorias">
+                        <option value="">Seleccione Categoría</option>
                         <option *ngFor="let categoria of categorias" [ngValue]="categoria._id" [disabled]="categorias.length === 0">{{ categoria.nombre }} </option>
-                    </select> -->
+                    </select>
                     <small *ngIf="idCategoriaNoValido" class="form-text text-danger">El campo Categoría es requerido</small>
                 </div>
             </div>

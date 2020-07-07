@@ -31,10 +31,10 @@ export class SubCategoriaService {
     url += '?token=' + this._usuarioService.token;
 
     return this.http.post( url, subcategoria).pipe( map( (resp: any) => {
-      Swal.fire('Categoría creada', 'categoria.nombre', 'success');
-      return resp.categoria;
-    }), catchError( err =>{
-      Swal.fire('Error al crear categoría', err.error.mensaje, 'error');
+      Swal.fire('Sub Categoría creada', subcategoria.nombre, 'success');
+      return resp.subcategoria;
+    }), catchError( err => {
+      Swal.fire('Error al crear sub categoría', err.error.mensaje, 'error');
       return throwError(err);
     }) );
   }
@@ -54,12 +54,13 @@ export class SubCategoriaService {
   }
 
   eliminarSubCategoria( id: string){
-    let url = URL_SERVICIOS + '/categoria/' + id;
+    console.log(id);
+    let url = URL_SERVICIOS + '/subcategoria/' + id;
     url += '?token=' + this._usuarioService.token;
     return this.http.delete( url ).pipe( map( (resp: any) => {
-      Swal.fire('Categoría Eliminada', resp.nombre, 'success');
+      Swal.fire('Sub Categoría Eliminada', resp.nombre, 'success');
     }), catchError( err => {
-      Swal.fire('Error al eliminar categoría', err.error.mensaje, 'error');
+      Swal.fire('Error al eliminar sub categoría', err.error.mensaje, 'error');
       return throwError(err);
     }) );
   }

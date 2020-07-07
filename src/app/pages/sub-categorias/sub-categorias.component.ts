@@ -22,6 +22,7 @@ export class SubCategoriasComponent implements OnInit {
   TituloModal: string;
   forma: FormGroup;
   cantBusqueda: number = 0;
+  botonOculto: boolean = true;
 
   constructor(
     config: NgbModalConfig,
@@ -41,6 +42,7 @@ export class SubCategoriasComponent implements OnInit {
 
   ngOnInit() {
     this.cargarSubCategorias();
+    this.cargarCategorias();
   }
 
   get nombreNoValido() { return this.forma.get('nombre').invalid && this.forma.get('nombre').touched; }
@@ -59,7 +61,6 @@ export class SubCategoriasComponent implements OnInit {
   cargarSubCategorias(){
     this._subCategoriaService.cargarSubCategorias().subscribe( (resp: any) => {
       this.subcategorias = resp.subcategorias;
-      console.log(this.subcategorias);
     });
   }
 
@@ -73,7 +74,7 @@ export class SubCategoriasComponent implements OnInit {
     this.TituloModal = 'Agregar Sub Categoría';
     this.resetFormulario();
     this.open(content);
-    this.cargarCategorias();
+    
   }
 
   open(content) {
@@ -88,18 +89,19 @@ export class SubCategoriasComponent implements OnInit {
       });
       return false;
     }
-    this._categoriaService[data._id !== null ? 'actualizarCategoria' : 'crearCategoria' ](data).subscribe( (resp: any) => {
+    this._subCategoriaService[data._id !== null ? 'actualizarSubCategoria' : 'crearSubCategoria' ](data).subscribe( (resp: any) => {
       this.cargarSubCategorias();
       document.getElementById('close').click();
     });
   }
 
   actualizarSubCategoria( $this ){
-    this.TituloModal = 'Editar Categoría';
+    this.TituloModal = 'Editar Sub Categoría';
     this.forma.setValue({
       _id: $this._id,
       nombre: ($this.nombre).trimRight().trimLeft(),
-      descripcion: ($this.descripcion).trimRight().trimLeft()
+      descripcion: ($this.descripcion).trimRight().trimLeft(),
+      idCategoria: $this.idCategoria._id
     });
   }
 
@@ -115,9 +117,9 @@ export class SubCategoriasComponent implements OnInit {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.value) {
-        /*._categoriaService.eliminarSubCategoria( $this._id ).subscribe( resp => {
+        this._subCategoriaService.eliminarSubCategoria( $this._id ).subscribe( resp => {
           this.cargarSubCategorias();
-        });*/
+        });
       }
     });
   }
@@ -126,11 +128,13 @@ export class SubCategoriasComponent implements OnInit {
     this.forma.reset({
       _id: null,
       nombre: null,
-      descripcion: null
+      descripcion: null,
+      idCategoria: ''
     });
   }
 
   cerrarModal(){
+    console.log(this.forma.dirty);
     if (this.forma.dirty) {
       Swal.fire({
         title: 'Confirmación',
@@ -152,12 +156,12 @@ export class SubCategoriasComponent implements OnInit {
   }
 
   buscar( termino: string ){
-    console.log(termino);
     if (termino) {
-      this._buscador.buscar('categoria', termino).subscribe( resp => {
-        if (resp.categoria.length > 0) {
-            this.categorias = resp.categoria;
-            this.cantBusqueda = resp.categoria.length;
+      this._buscador.buscar('subcategoria', termino).subscribe( resp => {
+        if (resp.subcategoria.length > 0) {
+            this.subcategorias = resp.subcategoria;
+            this.cantBusqueda = resp.subcategoria.length;
+            console.log(this.subcategorias);
         } else {
           this.cantBusqueda = 0;
         }

@@ -61,3 +61,7 @@ li {
     margin-top: 5px;
     color: #bbb;
 }
+
+i {
+    font-style: normal !important;
+}

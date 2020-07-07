@@ -40,7 +40,6 @@ export class CategoriaService {
   }
 
   actualizarCategoria( categoria: Categoria ){
-    console.log(categoria);
     let url = URL_SERVICIOS + '/categoria/' + categoria._id;
     url += '?token=' + this._usuarioService.token;
 

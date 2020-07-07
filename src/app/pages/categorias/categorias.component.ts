@@ -20,6 +20,7 @@ export class CategoriasComponent implements OnInit {
   TituloModal: string;
   forma: FormGroup;
   cantBusqueda: number = 0;
+  botonOculto: boolean = true;
 
   constructor(
     config: NgbModalConfig,
