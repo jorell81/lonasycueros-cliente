@@ -8,7 +8,8 @@ import { SettingsService,
          CategoriaService,
          SubCategoriaService,
          LoginGuard,
-         BuscadorService } from './service.index';
+         BuscadorService,
+         ProductoService } from './service.index';
 
 
 
@@ -26,7 +27,8 @@ import { SettingsService,
     UsuarioService,
     BuscadorService,
     CategoriaService,
-    SubCategoriaService
+    SubCategoriaService,
+    ProductoService
   ]
 })
 export class ServiceModule { }

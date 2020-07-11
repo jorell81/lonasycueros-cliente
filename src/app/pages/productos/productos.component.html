@@ -1,1 +1,217 @@
-<p>productos works!</p>
+<ngx-flip [flip]="flip" class="ngflip">
+    <div front>
+        <div class="row animated fadeIn">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                            <div class="col-lg-9">
+                                                <select class="form-control" style="width: auto" name="itemsPagina" [(ngModel)]="itemsPagina">
+                                                  <option [ngValue]="10">10 por pagina</option>
+                                                  <option [ngValue]="20">20 por pagina</option>
+                                                  <option [ngValue]="30">30 por pagina</option>
+                                                </select>
+                                                <br>
+                                            </div>
+
+                                            <div class="col-lg-3 text-right">
+                                                <button (click)=agregarProducto() type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                                    <li class="fa fa-plus responsive"></li>
+                                                    <li class="noresponsive"><i class="fa fa-plus"></i> Agregar</li>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                        <br>
+                                        <div *ngIf="productos.length === 0" class="alert alert-info " role="alert ">
+                                            <h4 class="alert-heading ">PRODUCTOS</h4>
+                                            <p>No hay productos almacenados. Por favor agregue productos.</p>
+                                        </div>
+                                        <div *ngIf="productos.length > 0" class="table-responsive">
+                                            <table class=" table table-hover ">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th scope="col" width="400px">Nombre</th>
+                                                        <th scope="col">Valor</th>
+                                                        <th scope="col">Talla</th>
+                                                        <th scope="col">Color</th>
+                                                        <th scope="col">Marca</th>
+                                                        <th scope="col">Bodega</th>
+                                                        <th scope="col" width="150px">Opciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngIf="productos.length > 0">
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            <div class="input-group" style="margin-bottom: 0;">
+                                                                <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar...">
+                                                                <span class="input-group-addon"><i> {{ cantBusqueda }} </i></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngFor="let item of globales.Lista(productos,pagina,itemsPagina); let i = index">
+                                                        <td> {{ i + 1 }} </td>
+                                                        <td>{{ item.nombre}}</td>
+                                                        <td>{{ item.valorSalida }}</td>
+                                                        <td>{{ item.talla }}</td>
+                                                        <td>{{ item.color}}</td>
+                                                        <td>{{ item.marca}}</td>
+                                                        <td>{{ item.bodega}}</td>
+                                                        <td>
+                                                            <button (click)="actualizarProducto( this.item )" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
+                                                            <button (click)="eliminarProducto( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <ngb-pagination *ngIf="productos.length > 0" [maxSize]="5" class="right" [collectionSize]="productos.length" [(page)]="pagina" [pageSize]="itemsPagina">
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div back>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-lg-12 text-right">
+                                <button (click)="regresar()" type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                    <li class="fa fa-arrow-left responsive"></li>
+                                    <li class="noresponsive"><i class="fa fa-arrow-left"></i> Regresar</li>
+                                </button>
+                            </div>
+                        </div>
+                        <form [formGroup]="forma" (ngSubmit)="guardarProducto()">
+                            <div class="form-body">
+                                <!--/row-->
+                                <div class="row">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>Nombre Producto</label>
+                                            <input type="text" class="form-control" placeholder="Nombre Producto" maxlength="41" formControlName="nombre" [class.is-invalid]="nombreNoValido.invalid && nombreNoValido.touched">
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.required && nombreNoValido.touched" class="text-danger">El campo Nombre Producto es requerido</small>
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.minlength" class="text-danger ">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 40 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>Marca</label>
+                                            <input type="text" class="form-control" placeholder="Marca" maxlength="31" formControlName="marca" [class.is-invalid]="marcaNoValida.invalid && marcaNoValida.touched">
+                                            <small *ngIf="marcaNoValida.invalid && marcaNoValida.errors.required && marcaNoValida.touched" class="text-danger">El campo Marca es requerido</small>
+                                            <small *ngIf="marcaNoValida.invalid && marcaNoValida.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="marcaNoValida.invalid && marcaNoValida.errors.maxlength" class="text-danger">La longitud maxima del campo es de 30 caracteres</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Valor Entrada</label>
+                                            <input type="number" class="form-control" placeholder="Valor de Entrada" maxlength="11" formControlName="valorEntrada" [class.is-invalid]="valorEntradaNoValido.invalid && valorEntradaNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="valorEntradaNoValido.invalid && valorEntradaNoValido.errors.required && valorEntradaNoValido.touched" class="text-danger">El campo Valor de Entrada es requerido</small>
+                                            <small *ngIf="valorEntradaNoValido.invalid && valorEntradaNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 dígitos</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Valor Salida</label>
+                                            <input type="number" class="form-control" placeholder="Valor Salida" maxlength="11" formControlName="valorSalida" [class.is-invalid]="valorSalidaNoValido.invalid && valorSalidaNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="valorSalidaNoValido.invalid && valorSalidaNoValido.errors.required && valorSalidaNoValido.touched" class="text-danger">El campo Valor Salida es requerido</small>
+                                            <small *ngIf="valorSalidaNoValido.invalid && valorSalidaNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 dígitos</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Talla</label>
+                                            <input type="text" class="form-control" placeholder="Talla" maxlength="11" formControlName="talla" [class.is-invalid]="tallaNoValido.invalid && tallaNoValido.touched">
+                                            <small *ngIf="tallaNoValido.invalid && tallaNoValido.errors.required && tallaNoValido.touched" class="text-danger">El campo Talla es requerido</small>
+                                            <small *ngIf="tallaNoValido.invalid && tallaNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Color</label>
+                                            <input type="text" class="form-control" placeholder="Color" maxlength="16" formControlName="color" [class.is-invalid]="colorNoValido.invalid && colorNoValido.touched">
+                                            <small *ngIf="colorNoValido.invalid && colorNoValido.errors.required && colorNoValido.touched" class="text-danger">El campo Color es requerido</small>
+                                            <small *ngIf="colorNoValido.invalid && colorNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="colorNoValido.invalid && colorNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 15 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <!--/row-->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Bodega </label>
+                                            <input type="number" class="form-control" placeholder="Bodega" maxlength="11" formControlName="bodega" [class.is-invalid]="bodegaNoValido.invalid && bodegaNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="bodegaNoValido.invalid && bodegaNoValido.errors.required && bodegaNoValido.touched" class="text-danger">El campo bodega es requerido</small>
+                                            <small *ngIf="bodegaNoValido.invalid && bodegaNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Genero </label>
+                                            <input type="text" class="form-control" placeholder="Genero" maxlength="16" formControlName="genero" [class.is-invalid]="generoNoValido.invalid && generoNoValido.touched">
+                                            <small *ngIf="generoNoValido.invalid && generoNoValido.errors.required && generoNoValido.touched" class="text-danger">El campo Genero es requerido</small>
+                                            <small *ngIf="generoNoValido.invalid && generoNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="generoNoValido.invalid && generoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 15 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Categorías</label>
+                                            <select class="form-control custom-select" formControlName="idCategoria" placeholder="Categorías" (ngModelChange)="CambioSelect($event)" [class.is-invalid]="idCategoriaNoValido.invalid && idCategoriaNoValido.touched">
+                                                <option value="">Seleccione Categoría</option>
+                                                <option *ngFor="let categoria of categorias" [ngValue]="categoria._id" [disabled]="categorias.length === 0">{{ categoria.nombre }} </option>
+                                            </select>
+                                            <small *ngIf="idCategoriaNoValido.invalid && idCategoriaNoValido.errors.required && idCategoriaNoValido.touched" class="text-danger ">El campo Categorías es requerido</small>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="subcategorias.length > 0" class="col-md-6 animated fadeIn">
+                                        <div class="form-group">
+                                            <label>Sub Categorías</label>
+                                            <select class="form-control custom-select" formControlName="idSubCategoria" placeholder="Sub Categorías" [class.is-invalid]="idSubCategoriaNoValido.invalid && idSubCategoriaNoValido.touched">
+                                                <option value="">Seleccione Sub Categoría</option>
+                                                <option *ngFor="let subcategoria of subcategorias" [ngValue]="subcategoria._id">{{ subcategoria.nombre }} </option>
+                                            </select>
+                                            <small *ngIf="idSubCategoriaNoValido.invalid && idSubCategoriaNoValido.errors.required && idSubCategoriaNoValido.touched" class="text-danger">El campo Sub Categorías es requerido</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit " class="btn btn-primary ">Guardar</button>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ngx-flip>

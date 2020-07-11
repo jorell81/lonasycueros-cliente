@@ -140,8 +140,7 @@ export class CategoriasComponent implements OnInit {
   }
 
   buscar( termino: string ){
-    console.log(termino);
-    if (termino) {
+    if (termino && termino.length > 2) {
       this._buscador.buscar('categoria', termino).subscribe( resp => {
         if (resp.categoria.length > 0) {
             this.categorias = resp.categoria;

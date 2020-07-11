@@ -1,4 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Producto } from '../../models/producto.model';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { BuscadorService, ProductoService, CategoriaService, SubCategoriaService } from '../../services/service.index';
+import { Globales } from '../../config/globales';
+import { Categoria } from '../../models/categoria.model';
+import { SubCategoria } from '../../models/subcategoria.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-productos',
@@ -7,9 +14,192 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductosComponent implements OnInit {
 
-  constructor() { }
+  flip: boolean = false;
+  pagina = 1;
+  itemsPagina = 10;
+  productos: Producto[] = [];
+  forma: FormGroup;
+  cantBusqueda: number = 0;
+  categorias: Categoria[] = [];
+  subcategorias: SubCategoria[] = [];
+
+  constructor(
+    public globales: Globales,
+    private fb: FormBuilder,
+    public _buscador: BuscadorService,
+    public _productoService: ProductoService,
+    public _categoriaService: CategoriaService,
+    public _subCategoriaServide: SubCategoriaService
+  ) {
+    this.crearFormulario();
+    this.resetFormulario();
+  }
 
   ngOnInit() {
+    this.cargarProductos();
+    this.cargarCategorias();
+  }
+
+  get nombreNoValido() { return this.forma.get('nombre'); }
+  get marcaNoValida() { return this.forma.get('marca'); }
+  get valorEntradaNoValido() { return this.forma.get('valorEntrada'); }
+  get valorSalidaNoValido() { return this.forma.get('valorSalida'); }
+  get tallaNoValido() { return this.forma.get('talla'); }
+  get colorNoValido() { return this.forma.get('color'); }
+  get bodegaNoValido() { return this.forma.get('bodega'); }
+  get generoNoValido() { return this.forma.get('genero'); }
+  get idCategoriaNoValido() { return this.forma.get('idCategoria'); }
+  get idSubCategoriaNoValido() { return this.forma.get('idSubCategoria'); }
+
+  crearFormulario() {
+    this.forma = this.fb.group({
+      _id: null,
+      nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
+      marca: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      valorEntrada: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      valorSalida: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      talla: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      color: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      bodega: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      genero: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      idCategoria: [null, [Validators.required, Validators.minLength(1)]],
+      idSubCategoria: [null, [Validators.required, Validators.minLength(1)]],
+    });
+  }
+
+  cargarProductos() {
+    this._productoService.cargarProductos().subscribe((resp: any) => {
+      this.productos = resp.productos;
+    });
+  }
+
+  agregarProducto() {
+    this.flip = !this.flip;
+    this.resetFormulario();
+  }
+
+  guardarProducto() {
+    let data = this.forma.value;
+    if (this.forma.invalid) {
+      Object.values(this.forma.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return false;
+    }
+    this._productoService[data._id !== null ? 'actualizarProducto' : 'crearProducto'](data).subscribe((resp: any) => {
+      this.cargarProductos();
+      this.flip = !this.flip;
+      this.resetFormulario();
+    });
+  }
+
+  cargarCategorias() {
+
+    this._categoriaService.cargarCategorias().subscribe((resp: any) => {
+      this.categorias = resp.categorias;
+    });
+  }
+
+  CambioSelect(event) {
+    if (event.length > 0) {
+      this.forma.controls.idSubCategoria.reset('');
+      this._subCategoriaServide.cargarSubCategoriasxIdCategoria(event).subscribe((subcategorias) => {
+        this.subcategorias = subcategorias;
+      });
+    }
+
+  }
+
+  actualizarProducto($this) { 
+    this.flip = !this.flip;
+    console.log($this);
+    this.forma.setValue({
+      _id: $this._id,
+      nombre: $this.nombre,
+      marca: $this.marca,
+      valorEntrada: $this.valorEntrada,
+      valorSalida: $this.valorSalida,
+      talla: $this.talla,
+      color: $this.color,
+      bodega: $this.bodega,
+      genero: $this.genero,
+      idCategoria: $this.idSubCategoria.idCategoria,
+      idSubCategoria: $this.idSubCategoria._id
+    });
+  }
+
+  eliminarProducto($this) { 
+    Swal.fire({
+      title: 'Confirmación',
+      text: 'Eliminara el producto ' + $this.nombre,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.value) {
+        this._productoService.eliminarProducto( $this._id ).subscribe( resp => {
+          this.cargarProductos();
+        });
+      }
+    });
+  }
+
+  buscar(termino: string) {
+    if (termino && termino.length > 2) {
+      this._buscador.buscar('producto', termino).subscribe( resp => {
+        if (resp.producto.length > 0) {
+            this.productos = resp.producto;
+            this.cantBusqueda = resp.producto.length;
+        } else {
+          this.cantBusqueda = 0;
+        }
+      });
+    } else {
+      this.cantBusqueda = 0;
+      this.cargarProductos();
+    }
+  }
+
+  resetFormulario() {
+    this.forma.reset({
+      _id: null,
+      nombre: null,
+      marca: null,
+      valorEntrada: null,
+      valorSalida: null,
+      talla: null,
+      color: null,
+      bodega: null,
+      genero: null,
+      idCategoria: '',
+      idSubCategoria: ''
+    });
+    this.subcategorias = [];
+  }
+
+  regresar() {
+    
+    if (this.forma.dirty) {
+      Swal.fire({
+        title: 'Confirmación',
+        text: '¿Esta seguro, puede perder información?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+      }).then((result) => {
+        if (result.value) {
+          this.flip = false;
+        }
+      });
+    } else {
+      this.flip = false;
+    }
   }
 
 }

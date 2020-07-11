@@ -156,7 +156,7 @@ export class SubCategoriasComponent implements OnInit {
   }
 
   buscar( termino: string ){
-    if (termino) {
+    if (termino && termino.length > 2) {
       this._buscador.buscar('subcategoria', termino).subscribe( resp => {
         if (resp.subcategoria.length > 0) {
             this.subcategorias = resp.subcategoria;

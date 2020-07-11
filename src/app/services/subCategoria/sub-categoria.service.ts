@@ -54,7 +54,6 @@ export class SubCategoriaService {
   }
 
   eliminarSubCategoria( id: string){
-    console.log(id);
     let url = URL_SERVICIOS + '/subcategoria/' + id;
     url += '?token=' + this._usuarioService.token;
     return this.http.delete( url ).pipe( map( (resp: any) => {
@@ -63,6 +62,14 @@ export class SubCategoriaService {
       Swal.fire('Error al eliminar sub categoría', err.error.mensaje, 'error');
       return throwError(err);
     }) );
+  }
+
+  cargarSubCategoriasxIdCategoria(id: string){
+    let url = URL_SERVICIOS + '/subcategoria/' + id;
+    url += '?token=' + this._usuarioService.token;
+    return this.http.get( url ).pipe( map( (resp: any) => {
+      return resp.subcategorias;
+    }));
   }
 
   

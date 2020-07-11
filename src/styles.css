@@ -41,9 +41,38 @@
     h3 {
         font-size: 20px;
     }
+    .ngflip {
+        min-height: 94vh;
+        /* overflow-y: auto;
+        overflow-x: hidden; */
+    }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 769px) and (max-width: 1099px) {
+    .responsive {
+        display: none !important;
+    }
+    .ngflip {
+        min-height: 70vh;
+    }
+}
+
+@media (min-width: 1100px) and (max-width: 1599px) {
+    .responsive {
+        display: none !important;
+    }
+    .ngflip {
+        min-height: 88vh;
+    }
+}
+
+@media (min-width: 360px) and (max-width: 640px) {
+    .ngflip {
+        min-height: 154vh;
+    }
+}
+
+@media (min-width: 1600px) {
     .responsive {
         display: none !important;
     }

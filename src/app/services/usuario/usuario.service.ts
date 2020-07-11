@@ -22,7 +22,6 @@ export class UsuarioService {
     public http: HttpClient,
     public router: Router
   ) { 
-    console.log('Servicio de usuario listo');
     this.cargarStorage();
   }
 

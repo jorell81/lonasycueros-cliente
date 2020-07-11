@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FlipModule } from 'ngx-flip';
 
 
 import { ProgressComponent } from './progress/progress.component';
@@ -59,7 +60,8 @@ import { ProfileComponent } from './profile/profile.component';
         ChartsModule,
         CommonModule,
         ReactiveFormsModule,
-        NgbModule
+        NgbModule,
+        FlipModule,
     ]
 })
 export class PagesModule { }
