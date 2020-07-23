@@ -1,0 +1,72 @@
+.Contenedor {
+    display: none;
+}
+
+.Item {
+    width: 3.5cm;
+    height: 2.5cm;
+    margin-right: 0.4cm;
+    margin-bottom: 0.4cm;
+    display: inline-block;
+    background: white;
+    overflow: hidden;
+    -webkit-box-shadow: inset 0px 0px 0px 1px #eee;
+    -moz-box-shadow: inset 0px 0px 0px 1px #eee;
+    box-shadow: inset 0px 0px 0px 1px #eee;
+}
+
+label {
+    margin: 0;
+    padding: 0;
+}
+
+.Item:nth-child(5n) {
+    margin-right: 0px;
+}
+
+.Nombre {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0 0 0 10px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.Detalle {
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0 0 0 10px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.Valor {
+    display: block;
+    width: 90%;
+    text-align: right;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.Codigo {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+}
+
+.divisor {
+    display: block;
+    width: 100%;
+    padding: 5px 0 0 0;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}

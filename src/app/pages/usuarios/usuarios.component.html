@@ -1,1 +1,207 @@
-<p>usuarios works!</p>
+<ngx-flip [flip]="flip" class="ngflip">
+    <div front>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                            <div class="col-lg-9">
+                                                <select class="form-control" style="width: auto" name="itemsPagina" [(ngModel)]="itemsPagina">
+                                                  <option [ngValue]="10">10 por pagina</option>
+                                                  <option [ngValue]="20">20 por pagina</option>
+                                                  <option [ngValue]="30">30 por pagina</option>
+                                                </select>
+                                                <br>
+                                            </div>
+
+                                            <div class="col-lg-3 text-right">
+                                                <button (click)=agregarusuario() type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                                    <li class="fa fa-plus responsive"></li>
+                                                    <li class="noresponsive"><i class="fa fa-plus"></i> Agregar</li>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                        <br>
+                                        <div *ngIf="usuarios.length === 0" class="alert alert-info " role="alert ">
+                                            <h4 class="alert-heading ">USUARIOS</h4>
+                                            <p>No hay usuarios almacenados. Por favor agregue usuarios.</p>
+                                        </div>
+                                        <div *ngIf="usuarios.length > 0" class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col" width="200px" class="text-center">Nombre</th>
+                                                        <th scope="col" class="text-center">Apellido</th>
+                                                        <th scope="col" class="text-center">Correo</th>
+                                                        <th scope="col" class="text-center">Rol</th>
+                                                        <th scope="col" class="text-center">Estado</th>
+                                                        <th scope="col" width="150px" class="text-center">Opciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngIf="usuarios.length > 0">
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <div class="input-group" style="margin-bottom: 0;">
+                                                                <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar..." id="buscador">
+                                                                <span class="input-group-addon"><i> {{ cantBusqueda }} </i></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngFor="let item of globales.Lista(usuarios,pagina,itemsPagina); let i = index">
+                                                        <td class="text-center">{{ item.nombre}}</td>
+                                                        <td class="text-center">{{ item.apellido}}</td>
+                                                        <td class="text-center">{{ item.email}}</td>
+                                                        <td class="text-center">
+                                                            <span *ngIf="item.rol !== 'USER_ROLE'" class="label labeltable label-light-success">Administrador</span>
+                                                            <span *ngIf="item.rol === 'USER_ROLE'" class="label labeltable label-light-primary">Vendedor</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span *ngIf="item.estado" class="label labeltable label-light-info">Activo</span>
+                                                            <span *ngIf="!item.estado" class="label labeltable label-light-warning">Inactivo</span>
+                                                        </td>
+                                                        <td class="text-center btnOpciones">
+                                                            <button (click)="actualizarUsuario( this.item )" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
+                                                            <button (click)="eliminarUsuario( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <ngb-pagination *ngIf="usuarios.length > 0" [maxSize]="5" class="right" [collectionSize]="usuarios.length" [(page)]="pagina" [pageSize]="itemsPagina">
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div back>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-lg-12 text-right">
+                                <button (click)="regresar()" type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                    <li class="fa fa-arrow-left responsive"></li>
+                                    <li class="noresponsive"><i class="fa fa-arrow-left"></i> Regresar</li>
+                                </button>
+                            </div>
+                        </div>
+                        <form [formGroup]="forma" class="form p-t-20" (ngSubmit)="guardarUsuario()" autocomplete="off">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputuname">Nombre</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-user"></i></div>
+                                            <input formControlName="nombre" name="nombre" type="text" class="form-control" maxlength="21" placeholder="Nombre" [class.is-invalid]="nombreNoValido.invalid && nombreNoValido.touched">
+                                        </div>
+                                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.required && nombreNoValido.touched" class="text-danger">El campo Nombre es requerido</small>
+                                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.minlength" class="text-danger ">La longitud minima del campo es de 3 caracteres</small>
+                                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 20 caracteres</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputuname">Apellido</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-user"></i></div>
+                                            <input formControlName="apellido" name="apellido" type="text" class="form-control" maxlength="21" placeholder="Apellido" [class.is-invalid]="apellidoNoValido.invalid && apellidoNoValido.touched">
+                                        </div>
+                                        <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.required && apellidoNoValido.touched" class="text-danger">El campo Apellido es requerido</small>
+                                        <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.minlength" class="text-danger ">La longitud minima del campo es de 3 caracteres</small>
+                                        <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 20 caracteres</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Correo</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-email"></i></div>
+                                            <input formControlName="email" name="email" type="email" class="form-control" placeholder="Correo Electrónico" [class.is-invalid]="emailNoValido.invalid && emailNoValido.touched">
+                                        </div>
+                                        <small *ngIf="emailNoValido.invalid && emailNoValido.errors.required && emailNoValido.touched" class="text-danger">El campo Correo Electrónico es requerido</small>
+                                        <small *ngIf="emailNoValido.invalid && emailNoValido.errors.minlength" class="text-danger ">La longitud minima del campo es de 3 caracteres</small>
+                                        <small *ngIf="emailNoValido.invalid && emailNoValido.errors.email" class="text-danger ">No es un formato de correo electrónico valido</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="exampleInputuname">Rol</label>
+                                        <ng-select [items]="roles" placeholder="Roles" bindLabel="nombre" bindValue="value" formControlName="rol" [class.is-invalid]="rolNoValido.invalid && rolNoValido.touched">
+                                        </ng-select>
+                                        <small *ngIf="rolNoValido.invalid && rolNoValido.errors.required && rolNoValido.touched" class="text-danger">El campo Rol es requerido</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="mostrarActivo">
+                                <div class="col-lg-6">
+                                    <label class="switch">
+                                        <input class="switch-input" formControlName="estado" type="checkbox" />
+                                        <span class="switch-label" data-on="Activo" data-off="Inactivo"></span> 
+                                        <span class="switch-handle"></span> 
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="mostrarCheck">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <div class="checkbox checkbox-info p-t-0">
+                                            <input id="checkbox-signup" (change)="onChange($event.target.checked)" formControlName="checkContrasena" type="checkbox" class="filled-in chk-col-light-green">
+                                            <label for="checkbox-signup"> Cambiar Contraseña </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row animated fadeIn" *ngIf="mostrarContrasena">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Contraseña</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-lock"></i></div>
+                                            <input formControlName="password" name="password" type="password" class="form-control" placeholder="Contraseña" [class.is-invalid]="passwordNoValido.invalid && passwordNoValido.touched">
+                                        </div>
+                                        <small *ngIf="passwordNoValido.invalid && passwordNoValido.errors.required && passwordNoValido.touched" class="text-danger">El campo Contraseña es requerido</small>
+                                        <small *ngIf="passwordNoValido.invalid && passwordNoValido.errors.minlength" class="text-danger ">La longitud minima del campo es de 3 caracteres</small>
+                                        <small *ngIf="passwordNoValido.invalid && passwordNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 20 caracteres</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Confirmar contraseña</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-lock"></i></div>
+                                            <input formControlName="password2" name="password2" type="password" class="form-control" placeholder="Confirmar contraseña" [class.is-invalid]="(password2NoValido.invalid && password2NoValido.touched) || forma.errors?.passwordIguales">
+                                        </div>
+                                        <small *ngIf="password2NoValido.invalid && password2NoValido.errors.required && password2NoValido.touched" class="text-danger">El campo Confirmar contraseña es requerido</small>
+                                        <small *ngIf="password2NoValido.invalid && password2NoValido.errors.minlength" class="text-danger ">La longitud minima del campo es de 3 caracteres</small>
+                                        <small *ngIf="password2NoValido.invalid && password2NoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 20 caracteres</small>
+                                    </div>
+                                    <div class="form-group" *ngIf="forma.errors?.passwordIguales && !forma.pristine">
+                                        <p class="text-danger">
+                                            Las contraseñas no son iguales
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light m-r-10"><i class="fa fa-save"></i> Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ngx-flip>

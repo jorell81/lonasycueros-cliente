@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
-import { URL_SERVICIOS } from '../../config/config';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 
 
@@ -14,56 +14,50 @@ import Swal from 'sweetalert2';
 })
 export class UsuarioService {
 
-  usuario: Usuario;
-  token: string;
+  base_url = environment.base_url;
+  public usuario: Usuario;
   menu: any = [];
 
   constructor(
-    public http: HttpClient,
+    private http: HttpClient,
     public router: Router
-  ) { 
-    this.cargarStorage();
+  ) {}
+
+  get token(): string{
+    return sessionStorage.getItem('token') || '';
+  }
+
+  get headers(){
+    return {
+      headers: {
+        'Bearer': this.token
+      }
+    };
+  }
+
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.usuario.rol;
   }
 
   // Funcion que permite saber si el usuario esta logueado y paso por el guard de login o si no lo saca
-  estaLogueado(){
-    return (this.token.length > 5) ? true : false;
+  validarToken(): Observable<boolean>{
+    return this.http.get(`${ this.base_url }/login/renew`, this.headers ).pipe(
+      map( (resp: any) => {
+        const { idUsuario, nombre, apellido, email, rol, estado } = resp.usuario;
+        this.usuario = new Usuario( nombre, apellido, email, '', rol, idUsuario, estado);
+        sessionStorage.setItem('token', resp.token);
+        sessionStorage.setItem('menu', JSON.stringify(resp.menu));
+        return true;
+      }),
+      catchError( error => of(false))
+    );
   }
-
-  cargarStorage(){
-    if (sessionStorage.getItem('token')) {
-      this.token = sessionStorage.getItem('token');
-      this.usuario = JSON.parse(sessionStorage.getItem('usuario'));
-      // this.menu = JSON.parse(sessionStorage.getItem('menu'));
-    } else {
-      this.token = '';
-      this.usuario = null;
-      // this.menu = [];
-
-    }
-  }
-  
-
-  // Funcion que guarda los datos de sesión en el sessionStorage
-  guardarSessionStorage(id: string, token: string, usuario: Usuario){
-    sessionStorage.setItem('id', id);
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('usuario', JSON.stringify(usuario));
-    // sessionStorage.setItem('menu', JSON.stringify(menu));
-
-    this.usuario = usuario;
-    this.token = token;
-    // this.menu = menu;
-  }
-  
 
   // Funcion que recibe el email y la contraseña para poder loguearse
   login( usuario: Usuario, recordar: boolean = false){
-    
-    console.log(usuario);
-    let url = URL_SERVICIOS + '/login';
-    return this.http.post( url, usuario).pipe(map((resp: any) => {
-      this.guardarSessionStorage(resp.id, resp.token, resp.usuario);
+    return this.http.post( `${ this.base_url }/login`, usuario).pipe(map((resp: any) => {
+      sessionStorage.setItem('token', resp.token);
+      sessionStorage.setItem('menu', JSON.stringify(resp.menu));
       if (recordar) {
         localStorage.setItem('email', usuario.email);
       } else {
@@ -71,35 +65,58 @@ export class UsuarioService {
       }
       return true;
     }), catchError( err => {
-      Swal.fire('Error en el login', err.error.mensaje, 'error');
+      Swal.fire('Error en el login', err.error.msg, 'error');
       return throwError(err);
     }));
   }
 
   logout(){
     this.usuario = null;
-    this.token = '';
     this.menu = [];
     sessionStorage.removeItem('token');
-    sessionStorage.removeItem('usuario');
-    sessionStorage.removeItem('id');
-    // sessionStorage.removeItem('menu');
-
-    this.router.navigate(['/login']);
+    sessionStorage.removeItem('menu');
+    this.router.navigateByUrl('/login');
     
   }
 
-  actualizarUsuario( usuario: Usuario){
-    let url = URL_SERVICIOS + '/usuario/' + usuario._id;
-    url += '?token=' + this.token;
-    return this.http.put( url, usuario).pipe( map( (resp: any) => {
-      let usuarioDB: Usuario = resp.usuario;
-      this.guardarSessionStorage( usuarioDB._id, this.token, usuarioDB);
+  cargarUsuarios(){
+    const url = `${ this.base_url}/usuarios`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.usuarios;
+    }));
+  }
+
+  crearUsuario(usuario: Usuario){
+    return this.http.post(`${ this.base_url }/usuarios`, usuario, this.headers).pipe( map( resp => {
+      console.log(resp);
+      Swal.fire('Crear Usuario', 'Usuario creado con exito', 'success');
+    }), catchError( err => {
+      Swal.fire('Error al crear usuario', err.error.mensaje, 'error');
+      return throwError(err);
+    }));
+  }
+  
+  actualizarUsuario( usuario: Usuario, cambio: boolean = false){
+    return this.http.put(`${ this.base_url }/usuarios/${usuario.idUsuario}/` + cambio, usuario, this.headers ).pipe( map( (resp: any) => {
+      console.log(resp);
       Swal.fire('Actualizar Usuario', usuario.nombre + ' ' + usuario.apellido , 'success');
     }), catchError( err => {
       Swal.fire('Error al actualizar usuario', err.error.mensaje, 'error');
       return throwError(err);
     }));
   }
+  
+  eliminarUsuario(idUsuario: number){
+    return this.http.delete(`${ this.base_url }/usuarios/${idUsuario}`, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Eliminar Usuario', 'El usuario se elimino con exito', 'success');
+    }), catchError( err => {
+      Swal.fire('Error al eliminar usuario', err.error.mensaje, 'error');
+      return throwError(err);
+    }));
+  }
+  
+
+
+
   
 }

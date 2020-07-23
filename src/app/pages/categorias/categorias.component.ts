@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Categoria } from '../../models/categoria.model';
 import { Globales } from '../../config/globales';
 import { CategoriaService } from '../../services/service.index';
@@ -6,6 +6,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BuscadorService } from '../../services/buscador/buscador.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-categorias',
@@ -20,9 +21,12 @@ export class CategoriasComponent implements OnInit {
   TituloModal: string;
   forma: FormGroup;
   cantBusqueda: number = 0;
-  botonOculto: boolean = true;
+  botonOculto: boolean = true; // mantiene oculto el boton de cerrar el modal
+  mostrarEstado: boolean = false;
+  
 
   constructor(
+    @Inject(DOCUMENT) private _document,
     config: NgbModalConfig,
     public globales: Globales,
     public _categoriaService: CategoriaService,
@@ -41,20 +45,21 @@ export class CategoriasComponent implements OnInit {
     this.cargarCategorias();
   }
 
-  get nombreNoValido() { return this.forma.get('nombre').invalid && this.forma.get('nombre').touched; }
-  get descripcionNoValido() { return this.forma.get('descripcion').invalid && this.forma.get('descripcion').touched; }
+  get nombreNoValido() { return this.forma.get('nombre'); }
+  get descripcionNoValido() { return this.forma.get('descripcion'); }
 
   crearFormulario() {
     this.forma = this.fb.group({
-      _id: null,
-      nombre: [null, [Validators.required, Validators.minLength(1)]],
-      descripcion: [null, [Validators.required, Validators.minLength(1)]]
+      idCategoria: null,
+      nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      descripcion: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
+      estado: false
     });
   }
 
   cargarCategorias(){
-    this._categoriaService.cargarCategorias().subscribe( (resp: any) => {
-      this.categorias = resp.categorias;
+    this._categoriaService.cargarCategorias().subscribe( (categorias: any) => {
+      this.categorias = categorias;
     });
   }
 
@@ -62,6 +67,7 @@ export class CategoriasComponent implements OnInit {
     this.TituloModal = 'Agregar Categoría';
     this.resetFormulario();
     this.open(content);
+    this.mostrarEstado = false;
   }
 
   open(content) {
@@ -76,25 +82,29 @@ export class CategoriasComponent implements OnInit {
       });
       return false;
     }
-    this._categoriaService[data._id !== null ? 'actualizarCategoria' : 'crearCategoria' ](data).subscribe( (resp: any) => {
+    this._categoriaService[data.idCategoria !== null ? 'actualizarCategoria' : 'crearCategoria' ](data).subscribe( (resp: any) => {
       this.cargarCategorias();
       document.getElementById('close').click();
+      this.cantBusqueda = 0;
+      this._document.getElementById('buscador').value = '';
     });
   }
 
   actualizarCategoria( $this ){
+    this.mostrarEstado = true;
     this.TituloModal = 'Editar Categoría';
     this.forma.setValue({
-      _id: $this._id,
-      nombre: ($this.nombre).trimRight().trimLeft(),
-      descripcion: ($this.descripcion).trimRight().trimLeft()
+      idCategoria: $this.idCategoria,
+      nombre: $this.nombre,
+      descripcion: $this.descripcion,
+      estado: $this.estado
     });
   }
 
   eliminarCategoria( $this ){
     Swal.fire({
       title: 'Confirmación',
-      text: 'Eliminara la categoria ' + $this.nombre,
+      text: 'Eliminara la categoría ' + $this.nombre,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -103,7 +113,7 @@ export class CategoriasComponent implements OnInit {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.value) {
-        this._categoriaService.eliminarCategoria( $this._id ).subscribe( resp => {
+        this._categoriaService.eliminarCategoria( $this.idCategoria ).subscribe( resp => {
           this.cargarCategorias();
         });
       }
@@ -114,7 +124,8 @@ export class CategoriasComponent implements OnInit {
     this.forma.reset({
       _id: null,
       nombre: null,
-      descripcion: null
+      descripcion: null,
+      estado: false
     });
   }
 
@@ -146,6 +157,7 @@ export class CategoriasComponent implements OnInit {
             this.categorias = resp.categoria;
             this.cantBusqueda = resp.categoria.length;
         } else {
+          this.cargarCategorias();
           this.cantBusqueda = 0;
         }
       });

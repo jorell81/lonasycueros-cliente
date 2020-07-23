@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SidebarService } from '../services/shared/sidebar.service';
 
 declare function init_plugins();
 
@@ -9,10 +10,15 @@ declare function init_plugins();
 })
 export class PagesComponent implements OnInit {
 
-  constructor() { }
+  anio = new Date().getFullYear();
+
+  constructor(
+    private SidebarService: SidebarService
+  ) { }
 
   ngOnInit() {
     init_plugins();
+    this.SidebarService.cargarMenu();
   }
 
 }

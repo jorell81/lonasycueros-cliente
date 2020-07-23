@@ -59,13 +59,13 @@
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <div><span class="hide-menu">{{ usuario.nombre }} {{ usuario.apellido }} </span></div>
+                        <div><span class="hide-menu">{{ usuario.nombre |titlecase }} {{ usuario.apellido | titlecase}} </span></div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right animated flipInY">
                         <ul class="dropdown-user">
                             <li>
                                 <div class="dw-user-box text-center">
-                                    <div><span class="hide-menu">{{ usuario.nombre }} {{ usuario.apellido }} </span></div>
+                                    <div><span class="hide-menu">{{ usuario.nombre |titlecase }} {{ usuario.apellido | titlecase}} </span></div>
                                     <!-- <div class="u-img"><img src="assets/images/users/1.jpg" alt="user"></div> -->
                                     <div class="u-text">
                                         <p class="text-muted">{{ usuario.email }} </p>
@@ -78,7 +78,7 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="#"><i class="ti-settings"></i> Cambiar Tema</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a (click)="_usuarioService.logout()" class="pointer"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
+                            <li><a (click)="logout()" class="pointer"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
                         </ul>
                     </div>
                 </li>

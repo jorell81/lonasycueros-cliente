@@ -7,67 +7,70 @@ import Swal from 'sweetalert2';
 import { UsuarioService } from '../usuario/usuario.service';
 import { SubCategoria } from '../../models/subcategoria.model';
 import { Categoria } from '../../models/categoria.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubCategoriaService {
 
+  base_url = environment.base_url;
+  token: string;
+  headers = {};
   
   constructor(
     public http: HttpClient,
     public _usuarioService: UsuarioService
-  ) { 
+  ) {
+    this.token = _usuarioService.token;
+    this.headers = _usuarioService.headers;
   }
 
   cargarSubCategorias(){
-    let url = URL_SERVICIOS + '/subcategoria';
+    const url = `${ this.base_url}/subcategorias/0`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.subcategorias;
+    }));
+  }
 
-    return this.http.get(url);
+  cargarSubCategoriasActivas(){
+    const url = `${ this.base_url}/subcategorias/1`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.categorias;
+    }));
   }
 
   crearSubCategoria(subcategoria: SubCategoria){
-    let url = URL_SERVICIOS + '/subcategoria';
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.post( url, subcategoria).pipe( map( (resp: any) => {
-      Swal.fire('Sub Categoría creada', subcategoria.nombre, 'success');
-      return resp.subcategoria;
+    return this.http.post(`${ this.base_url }/subcategorias`, subcategoria, this.headers).pipe( map( resp => {
+      console.log(resp);
+      Swal.fire('Crear Sub Categoría', 'Sub categoría creada con exito', 'success');
     }), catchError( err => {
-      Swal.fire('Error al crear sub categoría', err.error.mensaje, 'error');
+      Swal.fire('Error al crear Sub categoría', err.error.mensaje, 'error');
       return throwError(err);
-    }) );
+    }));
   }
 
   actualizarSubCategoria( subcategoria: SubCategoria ){
-    console.log(subcategoria);
-    let url = URL_SERVICIOS + '/subcategoria/' + subcategoria._id;
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.put( url, subcategoria).pipe( map( (resp: any) => {
-      Swal.fire('Categoría actualizada', subcategoria.nombre, 'success');
-      return resp.subcategoria;
-    }), catchError( err =>{
-      Swal.fire('Error al actualizar sub categoría', err.error.mensaje, 'error');
+    return this.http.put(`${ this.base_url }/subcategorias/${subcategoria.idSubCategoria}`, subcategoria, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Actualizar Sub Categoría', subcategoria.nombre, 'success');
+    }), catchError( err => {
+      Swal.fire('Error al actualizar Sub Categoría', err.error.mensaje, 'error');
       return throwError(err);
-    }) );
+    }));
   }
 
-  eliminarSubCategoria( id: string){
-    let url = URL_SERVICIOS + '/subcategoria/' + id;
-    url += '?token=' + this._usuarioService.token;
-    return this.http.delete( url ).pipe( map( (resp: any) => {
-      Swal.fire('Sub Categoría Eliminada', resp.nombre, 'success');
+  eliminarSubCategoria( idSubCategoria: string){
+    return this.http.delete(`${ this.base_url }/subcategorias/${idSubCategoria}`, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Eliminar Sub Categoría', 'La Sub Categoría se elimino con exito', 'success');
     }), catchError( err => {
-      Swal.fire('Error al eliminar sub categoría', err.error.mensaje, 'error');
+      Swal.fire('Error al eliminar Sub Categoría', err.error.mensaje, 'error');
       return throwError(err);
-    }) );
+    }));
   }
 
   cargarSubCategoriasxIdCategoria(id: string){
-    let url = URL_SERVICIOS + '/subcategoria/' + id;
-    url += '?token=' + this._usuarioService.token;
-    return this.http.get( url ).pipe( map( (resp: any) => {
+    const url = `${this.base_url}/subcategorias/${id}/1`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
       return resp.subcategorias;
     }));
   }

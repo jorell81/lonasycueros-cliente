@@ -7,7 +7,7 @@ import { DOCUMENT } from '@angular/common';
 export class SettingsService {
 
   ajustes: Ajustes = {
-    temaUrl: 'assets/css/colors/default-dark.css',
+    temaUrl: './assets/css/colors/default-dark.css',
     tema: 'default'
   }
 
@@ -29,7 +29,7 @@ export class SettingsService {
   }
 
   aplicarTema( tema: string) {
-    let url = `assets/css/colors/${ tema }.css`;
+    let url = `./assets/css/colors/${ tema }.css`;
     this._document.getElementById('tema').setAttribute('href', url);
 
     this.ajustes.tema = tema;

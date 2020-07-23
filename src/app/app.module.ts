@@ -5,6 +5,8 @@ import { APP_ROUTES } from './app-routing.module';
 
 // Modulos
 import { PagesModule } from './pages/pages.module';
+
+// import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { ServiceModule } from './services/service.module';
 
@@ -26,6 +28,7 @@ import { RegisterComponent } from './login/register.component';
     BrowserModule,
     APP_ROUTES,
     PagesModule,
+    // NgSelectModule,
     FormsModule,
     ServiceModule
   ],

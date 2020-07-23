@@ -6,8 +6,9 @@ export class Usuario {
         public nombre: string,
         public apellido: string,
         public email: string,
-        public password: string,
-        public role?: string,
-        public _id?: string
+        public contrasena: string,
+        public rol?: 'ADMIN_ROLE' | 'USER_ROLE',
+        public idUsuario?: string,
+        public estado?: boolean
     ){}
 }

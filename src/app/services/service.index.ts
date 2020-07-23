@@ -1,3 +1,5 @@
+export { TipoDocumentoService } from './tipoDocumento/tipo-documento.service';
+export { ClienteService } from './cliente/cliente.service';
 export { ProductoService } from './producto/producto.service';
 export { SubCategoriaService } from './subCategoria/sub-categoria.service';
 export { BuscadorService } from './buscador/buscador.service';
@@ -7,6 +9,8 @@ export { UsuarioService } from './usuario/usuario.service';
 export { SettingsService } from './settings/settings.service';
 export { SharedService } from './shared/shared.service';
 export { SidebarService } from './shared/sidebar.service';
+
+
 
 
 

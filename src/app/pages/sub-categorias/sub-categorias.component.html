@@ -35,31 +35,31 @@
                                     <table class=" table table-hover ">
                                         <thead class="thead-dark">
                                             <tr>
-                                                <th>#</th>
-                                                <th scope="col ">Nombre</th>
-                                                <th scope="col ">Descripcion</th>
-                                                <th scope="col ">Categoria</th>
-                                                <th scope="col " width="150px ">Opciones</th>
+                                                <th scope="col " class="text-center">Nombre</th>
+                                                <th scope="col " class="text-center">Descripcion</th>
+                                                <th scope="col " class="text-center">Categoria</th>
+                                                <th scope="col " class="text-center">Estado</th>
+                                                <th scope="col " width="150px" class="text-center">Opciones</th>
                                             </tr>
                                         </thead>
                                         <tbody *ngIf="subcategorias.length > 0">
                                             <tr>
                                                 <td colspan="5">
-                                                    <!-- <div class="form-group" style="margin-bottom: 0;">
-                                                        <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar y enter"><span class="input-group-addon"><i class="glyphicon glyphicon-search">00.0</i></span>
-                                                    </div> -->
                                                     <div class="input-group">
                                                         <input #input (keyup)="buscar( input.value )" type="text" class="form-control" placeholder="Buscar..." />
                                                         <span class="input-group-addon"><i> {{ cantBusqueda }} </i></span>
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr *ngFor="let item of globales.Lista(subcategorias,pagina,itemsPagina); let i = index">
-                                                <td> {{ i + 1 }} </td>
-                                                <td>{{ item.nombre }}</td>
-                                                <td>{{ item.descripcion}}</td>
-                                                <td>{{ item.idCategoria.nombre }} </td>
-                                                <td>
+                                            <tr *ngFor="let item of globales.Lista(subcategorias,pagina,itemsPagina)">
+                                                <td class="text-center">{{ item.nombre }}</td>
+                                                <td class="text-center">{{ item.descripcion}}</td>
+                                                <td class="text-center">{{ item.nombreCategoria }} </td>
+                                                <td class="text-center">
+                                                    <span *ngIf="item.estado" class="label labeltable label-light-info">Activa</span>
+                                                    <span *ngIf="!item.estado" class="label labeltable label-light-warning">Inactiva</span>
+                                                </td>
+                                                <td class="text-center btnOpciones">
                                                     <button (click)="actualizarSubCategoria( this.item ); open(content)" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
                                                     <button (click)="eliminarSubCategoria( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
                                                 </td>
@@ -88,29 +88,51 @@
         <button [hidden]="botonOculto" type="button" class="btn btn-secondary" aria-label="Close" id='close' (click)="d('Cross click')"></button>
     </div>
     <div class="modal-body ">
-        <form [formGroup]="forma">
-            <div class="form-group ">
-                <label class="col-6 col-form-label ">Nombre Sub Categoría</label>
-                <div class="col ">
-                    <input class="form-control " type="text " placeholder="Nombre Sub Categoría" formControlName="nombre" [class.is-invalid]="nombreNoValido">
-                    <small *ngIf="nombreNoValido" class="text-danger ">El campo Nombre Sub Categoria es requerido</small>
+        <form [formGroup]="forma" class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group ">
+                        <label class="col-form-label ">Nombre Sub Categoría</label>
+                        <input class="form-control " type="text " placeholder="Nombre Sub Categoría" maxlength="31" formControlName="nombre" [class.is-invalid]="nombreNoValido.invalid && nombreNoValido.touched">
+                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.required && nombreNoValido.touched" class="text-danger ">El campo Nombre Sub Categoria es requerido</small>
+                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                        <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 30 caracteres</small>
+                    </div>
                 </div>
             </div>
-            <div class="form-group ">
-                <label class="col-2 col-form-label ">Descripción</label>
-                <div class="col ">
-                    <input class="form-control " type="text " placeholder="Descripción de la sub categoría" formControlName="descripcion" [class.is-invalid]="descripcionNoValido">
-                    <small *ngIf="descripcionNoValido" class="text-danger ">El campo Descripción Categoria es requerido</small>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group ">
+                        <label class="col-form-label ">Descripción</label>
+                        <input class="form-control " type="text " placeholder="Descripción de la sub categoría" formControlName="descripcion" [class.is-invalid]="descripcionNoValido.invalid && descripcionNoValido.touched">
+                        <small *ngIf="descripcionNoValido.invalid && descripcionNoValido.errors.required && descripcionNoValido.touched" class="text-danger ">El campo Descripción Categoria es requerido</small>
+                        <small *ngIf="descripcionNoValido.invalid && descripcionNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                        <small *ngIf="descripcionNoValido.invalid && descripcionNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 30 caracteres</small>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-2 col-form-label">Categorías</label>
-                <div class="col">
-                    <select class="form-control" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido" placeholder="Categorias">
-                        <option value="">Seleccione Categoría</option>
-                        <option *ngFor="let categoria of categorias" [ngValue]="categoria._id" [disabled]="categorias.length === 0">{{ categoria.nombre }} </option>
-                    </select>
-                    <small *ngIf="idCategoriaNoValido" class="form-text text-danger">El campo Categoría es requerido</small>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label class="col-form-label">Categorías</label>
+                        <ng-select [items]="categorias" placeholder="Categorias" bindLabel="nombre" bindValue="idCategoria" formControlName="idCategoria" [class.is-invalid]="idCategoriaNoValido.invalid && idCategoriaNoValido.touched">
+                        </ng-select>
+                        <small *ngIf="idCategoriaNoValido.invalid && idCategoriaNoValido.errors.required && idCategoriaNoValido.touched" class="text-danger ">El campo Categoria es requerido</small>
+                        <small *ngIf="idCategoriaNoValido.invalid && idCategoriaNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                        <small *ngIf="idCategoriaNoValido.invalid && idCategoriaNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 30 caracteres</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="mostrarEstado">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <div class="checkbox checkbox-info p-t-0">
+                            <input id="checkbox-signup" formControlName="estado" type="checkbox" class="filled-in chk-col-light-green">
+                            <label for="checkbox-signup"> Activa </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

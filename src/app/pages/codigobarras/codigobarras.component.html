@@ -1,0 +1,126 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <!-- <div class="row container-fluid">
+                    <div class="col-xs-12">
+                        <h3 class="left">Generacion de los codigos de barras para los productos</h3>
+                        <hr>
+                    </div>
+                </div> -->
+                <div *ngIf="alerta" class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Codigos de Barra</h4>
+                    <p>No hay productos almacenados. por favor agregue un producto.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <form [formGroup]="forma">
+                                <div class="row container-fluid">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="IdProducto">Lista de Productos</label>
+                                            <ng-select [items]="productos" bindLabel="nombre" bindValue="codigoBarras" placeholder="Seleccione un producto..." formControlName="codigoBarras" [class.is-invalid]="codigoNoValido.invalid && codigoNoValido.touched">
+                                            </ng-select>
+                                            <small *ngIf="codigoNoValido.invalid && codigoNoValido.errors.required && codigoNoValido.touched" class="text-danger">El campo Nombre Producto es requerido</small>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="Cantidad">Cantidad</label>
+                                            <input type="number" class="form-control" formControlName="cantidad" maxlength="11" placeholder="Cantidad" [class.is-invalid]="cantidadNoValida.invalid && cantidadNoValida.touched">
+                                            <small *ngIf="cantidadNoValida.invalid && cantidadNoValida.errors.required && cantidadNoValida.touched" class="text-danger">El campo Cantidad es requerido</small>
+                                            <small *ngIf="cantidadNoValida.invalid && cantidadNoValida.errors.minlength" class="text-danger ">Cero no es un valor permitido</small>
+                                            <small *ngIf="cantidadNoValida.invalid && cantidadNoValida.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 10 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-primary right" style="margin-left:5px;" (click)="AgregarProducto()">Agregar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <h3>Ejemplo:</h3>
+                        <hr>
+                        <div class="Item">
+                            <label class="divisor"></label>
+                            <label class="Nombre">Ejemplo 12345678</label>
+                            <label class="Detalle">Talla y Color</label>
+                            <label class="divisor"></label>
+                            <div class="Codigo">
+                                <ngx-barcode [bc-value]="1000100001000001" [bc-display-value]="true" [bc-margin-top]="0" [bc-margin-left]="0" [bc-margin-bottom]="0" [bc-margin-right]="0" [bc-width]="0.8" [bc-height]="20" [bc-margin]="0" [bc-font-size]="9"></ngx-barcode>
+                            </div>
+                            <label class="Valor">{{150000 | Moneda }}</label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div *ngIf="misCodigos.length > 0" class="table-responsive animated fadeIn">
+                    <table class=" table table-hover ">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th scope="col" width="200px" class="text-center">Nombre</th>
+                                <th scope="col" class="text-center">Cantidad</th>
+                                <th scope="col" width="150px" class="text-center">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="misCodigos.length > 0">
+                            <tr *ngFor="let item of globales.Lista(misCodigos,pagina,itemsPagina); let i = index">
+                                <td class="text-center"> {{ i + 1 }} </td>
+                                <td class="text-center">{{ item.nombre}}</td>
+                                <td class="text-center">{{ item.items.length }} </td>
+                                <td class="text-center">
+                                    <button type="button" (click)="removerProducto( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <ngb-pagination *ngIf="productos.length > 0" [maxSize]="5" class="right" [collectionSize]="productos.length" [(page)]="pagina" [pageSize]="itemsPagina">
+                    </ngb-pagination>
+                </div>
+
+                <div class="row" *ngIf="misCodigos.length > 0">
+
+                    <div class="col-lg-3">
+                        <label style="font-weight: bold;"> Cantidad Total: {{ cantidadTotal }} </label>
+                    </div>
+                    <div class="col-lg-9 text-right">
+                        <button type="button" class="btn btn-info " style="margin-left:5px;" (click)="ImprimirCodigos()">
+                            <li class="fa fa-print responsive"></li>
+                            <li class="noresponsive">Imprimir</li>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="Imprime">
+                    <div class="Contenedor">
+                        <div class="Item" *ngFor="let item of imprimirCodigos">
+                            <label class="divisor"></label>
+                            <label class="divisor"></label>
+                            <label class="Nombre">{{item.nombre.substr(0,15)}}</label>
+                            <label class="Detalle">{{item.talla}} {{ item.color }}</label>
+                            <label class="divisor"></label>
+                            <div class="Codigo">
+                                <ngx-barcode [bc-value]="item.codigoBarras" [bc-display-value]="true" [bc-margin-top]="0" [bc-margin-left]="0" [bc-margin-bottom]="0" [bc-margin-right]="0" [bc-width]="0.8" [bc-height]="20" [bc-margin]="0" [bc-font-size]="9"></ngx-barcode>
+                            </div>
+                            <label class="divisor"></label>
+                            <label class="Valor">{{item.valorSalida | Moneda }}   </label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

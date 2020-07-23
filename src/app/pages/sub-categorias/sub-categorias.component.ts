@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { SubCategoria } from '../../models/subcategoria.model';
 import { Categoria } from '../../models/categoria.model';
 import { Globales } from '../../config/globales';
@@ -7,6 +7,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BuscadorService } from '../../services/buscador/buscador.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-sub-categorias',
@@ -23,8 +24,10 @@ export class SubCategoriasComponent implements OnInit {
   forma: FormGroup;
   cantBusqueda: number = 0;
   botonOculto: boolean = true;
+  mostrarEstado: boolean = false;
 
   constructor(
+    @Inject(DOCUMENT) private _document,
     config: NgbModalConfig,
     public globales: Globales,
     public _categoriaService: CategoriaService,
@@ -45,28 +48,30 @@ export class SubCategoriasComponent implements OnInit {
     this.cargarCategorias();
   }
 
-  get nombreNoValido() { return this.forma.get('nombre').invalid && this.forma.get('nombre').touched; }
-  get descripcionNoValido() { return this.forma.get('descripcion').invalid && this.forma.get('descripcion').touched; }
-  get idCategoriaNoValido() { return this.forma.get('idCategoria').invalid && this.forma.get('idCategoria').touched; }
+  get nombreNoValido() { return this.forma.get('nombre'); }
+  get descripcionNoValido() { return this.forma.get('descripcion'); }
+  get idCategoriaNoValido() { return this.forma.get('idCategoria'); }
 
   crearFormulario() {
     this.forma = this.fb.group({
-      _id: null,
-      nombre: [null, [Validators.required, Validators.minLength(1)]],
-      descripcion: [null, [Validators.required, Validators.minLength(1)]],
-      idCategoria: [null, Validators.required]
+      idSubCategoria: null,
+      nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      descripcion: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      idCategoria: [null, Validators.required],
+      estado: false
     });
   }
 
   cargarSubCategorias(){
-    this._subCategoriaService.cargarSubCategorias().subscribe( (resp: any) => {
-      this.subcategorias = resp.subcategorias;
+    this._subCategoriaService.cargarSubCategorias().subscribe( (subcategorias: any) => {
+      this.subcategorias = subcategorias;
+      console.log(subcategorias);
     });
   }
 
   cargarCategorias(){
-    this._categoriaService.cargarCategorias().subscribe( (resp: any) => {
-      this.categorias = resp.categorias;
+    this._categoriaService.cargarCategoriasActivas().subscribe( (categorias: any) => {
+      this.categorias = categorias;
     });
   }
 
@@ -74,6 +79,7 @@ export class SubCategoriasComponent implements OnInit {
     this.TituloModal = 'Agregar Sub Categoría';
     this.resetFormulario();
     this.open(content);
+    this.mostrarEstado = false;
     
   }
 
@@ -89,7 +95,7 @@ export class SubCategoriasComponent implements OnInit {
       });
       return false;
     }
-    this._subCategoriaService[data._id !== null ? 'actualizarSubCategoria' : 'crearSubCategoria' ](data).subscribe( (resp: any) => {
+    this._subCategoriaService[data.idSubCategoria !== null ? 'actualizarSubCategoria' : 'crearSubCategoria' ](data).subscribe( (resp: any) => {
       this.cargarSubCategorias();
       document.getElementById('close').click();
     });
@@ -97,11 +103,13 @@ export class SubCategoriasComponent implements OnInit {
 
   actualizarSubCategoria( $this ){
     this.TituloModal = 'Editar Sub Categoría';
+    this.mostrarEstado = true;
     this.forma.setValue({
-      _id: $this._id,
-      nombre: ($this.nombre).trimRight().trimLeft(),
-      descripcion: ($this.descripcion).trimRight().trimLeft(),
-      idCategoria: $this.idCategoria._id
+      idSubCategoria: $this.idSubCategoria,
+      nombre: $this.nombre,
+      descripcion: $this.descripcion,
+      idCategoria: $this.idCategoria,
+      estado: $this.estado
     });
   }
 
@@ -117,7 +125,7 @@ export class SubCategoriasComponent implements OnInit {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.value) {
-        this._subCategoriaService.eliminarSubCategoria( $this._id ).subscribe( resp => {
+        this._subCategoriaService.eliminarSubCategoria( $this.idSubCategoria ).subscribe( resp => {
           this.cargarSubCategorias();
         });
       }
@@ -126,10 +134,11 @@ export class SubCategoriasComponent implements OnInit {
 
   resetFormulario(){
     this.forma.reset({
-      _id: null,
+      idSubCategoria: null,
       nombre: null,
       descripcion: null,
-      idCategoria: ''
+      idCategoria: null,
+      estado: false
     });
   }
 
@@ -161,8 +170,8 @@ export class SubCategoriasComponent implements OnInit {
         if (resp.subcategoria.length > 0) {
             this.subcategorias = resp.subcategoria;
             this.cantBusqueda = resp.subcategoria.length;
-            console.log(this.subcategorias);
         } else {
+          this.cargarSubCategorias();
           this.cantBusqueda = 0;
         }
       });

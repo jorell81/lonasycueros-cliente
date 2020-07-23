@@ -21,6 +21,7 @@
             "app",
             "kebab-case"
         ],
+        "forin": false,
         "import-blacklist": [
             true,
             "rxjs/Rx"
@@ -77,6 +78,7 @@
         ],
         "trailing-comma": false,
         "prefer-const": false,
+        "prefer-for-of": false,
         "no-conflicting-lifecycle": true,
         "no-host-metadata-property": true,
         "no-input-rename": false,

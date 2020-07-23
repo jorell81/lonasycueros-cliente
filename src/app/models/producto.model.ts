@@ -3,7 +3,7 @@ export class Producto {
 
     // Propiedades Obligatorias
     constructor(
-        public _id: string,
+        public idProducto: string,
         public nombre: string,
         public idSubCategoria: string,
         public codigoBarras: string,
@@ -14,6 +14,7 @@ export class Producto {
         public color: string,
         public marca: string,
         public genero: string,
+        public estado: boolean,
         public fechaRegistro: string,
     ){}
 }

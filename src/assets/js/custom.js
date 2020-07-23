@@ -4,9 +4,7 @@ Author: Wrappixel
 Email: niravjoshi87@gmail.com
 File: js
 */
-
-
-function init_plugins() {
+const init_plugins = () => {
     $(function() {
         "use strict";
         $(function() {
@@ -85,7 +83,7 @@ function init_plugins() {
         // ============================================================== 
         // Auto select left navbar
         // ============================================================== 
-        $(function() {
+        /* $(function() {
             var url = window.location;
             var element = $('ul#sidebarnav a').filter(function() {
                 return this.href == url;
@@ -98,7 +96,7 @@ function init_plugins() {
                 }
             }
 
-        });
+        }); */
         // ============================================================== 
         //tooltip
         // ============================================================== 
@@ -158,4 +156,6 @@ function init_plugins() {
         });
 
     });
-}
+};
+
+init_plugins();

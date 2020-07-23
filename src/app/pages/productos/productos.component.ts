@@ -10,11 +10,12 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-productos',
   templateUrl: './productos.component.html',
-  styles: []
+  styleUrls: ['./productos.component.css']
 })
 export class ProductosComponent implements OnInit {
 
   flip: boolean = false;
+  changeSelect: boolean = false;
   pagina = 1;
   itemsPagina = 10;
   productos: Producto[] = [];
@@ -22,6 +23,7 @@ export class ProductosComponent implements OnInit {
   cantBusqueda: number = 0;
   categorias: Categoria[] = [];
   subcategorias: SubCategoria[] = [];
+  mostrarActivo: boolean = false;
 
   constructor(
     public globales: Globales,
@@ -29,7 +31,7 @@ export class ProductosComponent implements OnInit {
     public _buscador: BuscadorService,
     public _productoService: ProductoService,
     public _categoriaService: CategoriaService,
-    public _subCategoriaServide: SubCategoriaService
+    public _subCategoriaService: SubCategoriaService
   ) {
     this.crearFormulario();
     this.resetFormulario();
@@ -53,7 +55,7 @@ export class ProductosComponent implements OnInit {
 
   crearFormulario() {
     this.forma = this.fb.group({
-      _id: null,
+      idProducto: null,
       nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
       marca: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       valorEntrada: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
@@ -64,17 +66,19 @@ export class ProductosComponent implements OnInit {
       genero: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
       idCategoria: [null, [Validators.required, Validators.minLength(1)]],
       idSubCategoria: [null, [Validators.required, Validators.minLength(1)]],
+      estado: false
     });
   }
 
   cargarProductos() {
-    this._productoService.cargarProductos().subscribe((resp: any) => {
-      this.productos = resp.productos;
+    this._productoService.cargarProductos().subscribe( productos => {
+      this.productos = productos;
     });
   }
 
   agregarProducto() {
     this.flip = !this.flip;
+    this.mostrarActivo = false;
     this.resetFormulario();
   }
 
@@ -86,7 +90,7 @@ export class ProductosComponent implements OnInit {
       });
       return false;
     }
-    this._productoService[data._id !== null ? 'actualizarProducto' : 'crearProducto'](data).subscribe((resp: any) => {
+    this._productoService[data.idProducto !== null ? 'actualizarProducto' : 'crearProducto'](data).subscribe((resp: any) => {
       this.cargarProductos();
       this.flip = !this.flip;
       this.resetFormulario();
@@ -95,26 +99,32 @@ export class ProductosComponent implements OnInit {
 
   cargarCategorias() {
 
-    this._categoriaService.cargarCategorias().subscribe((resp: any) => {
-      this.categorias = resp.categorias;
+    this._categoriaService.cargarCategorias().subscribe((categorias: any) => {
+      this.categorias = categorias;
     });
   }
 
   CambioSelect(event) {
-    if (event.length > 0) {
-      this.forma.controls.idSubCategoria.reset('');
-      this._subCategoriaServide.cargarSubCategoriasxIdCategoria(event).subscribe((subcategorias) => {
+    if (event) {
+      this.forma.controls.idSubCategoria.reset(null);
+      this._subCategoriaService.cargarSubCategoriasxIdCategoria(event).subscribe((subcategorias) => {
+        if (subcategorias.length > 0) {
+          this.changeSelect = false;
+        } else {
+          this.changeSelect = true;
+        }
         this.subcategorias = subcategorias;
       });
+      
     }
 
   }
 
   actualizarProducto($this) { 
     this.flip = !this.flip;
-    console.log($this);
+    this.mostrarActivo = true;
     this.forma.setValue({
-      _id: $this._id,
+      idProducto: $this.idProducto,
       nombre: $this.nombre,
       marca: $this.marca,
       valorEntrada: $this.valorEntrada,
@@ -123,8 +133,9 @@ export class ProductosComponent implements OnInit {
       color: $this.color,
       bodega: $this.bodega,
       genero: $this.genero,
-      idCategoria: $this.idSubCategoria.idCategoria,
-      idSubCategoria: $this.idSubCategoria._id
+      idCategoria: $this.idCategoria,
+      idSubCategoria: $this.idSubCategoria,
+      estado: $this.estado
     });
   }
 
@@ -140,7 +151,7 @@ export class ProductosComponent implements OnInit {
       cancelButtonText: 'No',
     }).then((result) => {
       if (result.value) {
-        this._productoService.eliminarProducto( $this._id ).subscribe( resp => {
+        this._productoService.eliminarProducto( $this.idProducto ).subscribe( resp => {
           this.cargarProductos();
         });
       }
@@ -174,10 +185,13 @@ export class ProductosComponent implements OnInit {
       color: null,
       bodega: null,
       genero: null,
-      idCategoria: '',
-      idSubCategoria: ''
+      idCategoria: null,
+      idSubCategoria: null,
+      estado: false
     });
     this.subcategorias = [];
+    this.changeSelect = false;
+    this.mostrarActivo = false;
   }
 
   regresar() {

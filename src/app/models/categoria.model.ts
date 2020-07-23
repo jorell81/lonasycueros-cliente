@@ -3,8 +3,9 @@ export class Categoria {
 
     // Propiedades Obligatorias
     constructor(
-        public _id: string,
+        public idCategoria: string,
         public nombre: string,
-        public descripcion: string
+        public descripcion: string,
+        public estado: boolean
     ){}
 }

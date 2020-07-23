@@ -6,57 +6,57 @@ import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../usuario/usuario.service';
 import { Producto } from '../../models/producto.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
 
+  base_url = environment.base_url;
+  token: string;
+  headers = {};
+
   constructor(
     public http: HttpClient,
     public _usuarioService: UsuarioService
-  ) { }
+  ) {
+    this.token = _usuarioService.token;
+    this.headers = _usuarioService.headers;
+  }
 
   cargarProductos(){
-    let url = URL_SERVICIOS + '/producto';
-
-    return this.http.get(url);
+    const url = `${ this.base_url}/productos/0`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.productos;
+    }));
   }
 
   crearProducto(producto: Producto){
-    let url = URL_SERVICIOS + '/producto';
-    url += '?token=' + this._usuarioService.token;
-    
-    return this.http.post( url ,producto ).pipe( map( (resp: any) => {
-      Swal.fire('Producto creado', producto.nombre, 'success');
-      return resp.subcategoria; 
-    }), catchError(err =>{
-      Swal.fire('Error al crear producto', err.error.mensaje, 'error');
+    return this.http.post(`${ this.base_url }/productos`, producto, this.headers).pipe( map( resp => {
+      console.log(resp);
+      Swal.fire('Crear Producto', 'Producto creado con exito', 'success');
+    }), catchError( err => {
+      Swal.fire('Error al crear Producto', err.error.mensaje, 'error');
       return throwError(err);
     }));
   }
 
   actualizarProducto(producto: Producto){
-    let url = URL_SERVICIOS + '/producto/' + producto._id;
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.put( url, producto).pipe( map( (resp: any) => {
-      Swal.fire('Producto actualizado', producto.nombre, 'success');
-      return resp.producto;
-    }), catchError( err =>{
-      Swal.fire('Error al actualizar producto', err.error.mensaje, 'error');
+    return this.http.put(`${ this.base_url }/productos/${producto.idProducto}`, producto, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Actualizar Producto', producto.nombre, 'success');
+    }), catchError( err => {
+      Swal.fire('Error al actualizar Producto', err.error.mensaje, 'error');
       return throwError(err);
-    }) );
+    }));
   }
 
-  eliminarProducto(id){
-    let url = URL_SERVICIOS + '/producto/' + id;
-    url += '?token=' + this._usuarioService.token;
-    return this.http.delete( url ).pipe( map( (resp: any) => {
-      Swal.fire('Producto Eliminado', resp.nombre, 'success');
+  eliminarProducto(idProducto){
+    return this.http.delete(`${ this.base_url }/productos/${idProducto}`, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Eliminar Producto', 'El Producto se elimino con exito', 'success');
     }), catchError( err => {
-      Swal.fire('Error al eliminar producto', err.error.mensaje, 'error');
+      Swal.fire('Error al eliminar Producto', err.error.mensaje, 'error');
       return throwError(err);
-    }) );
+    }));
   }
 }

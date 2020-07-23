@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { promise } from 'protractor';
+import { Observable } from 'rxjs';
+import { ProductoService } from '../../services/service.index';
+import { Producto } from '../../models/producto.model';
 
 @Component({
   selector: 'app-promesas',
@@ -8,41 +10,23 @@ import { promise } from 'protractor';
 })
 export class PromesasComponent implements OnInit {
 
-  constructor() {
+  productos: Producto[] = [];
+  simpleItems = [];
+
+    constructor(public _productoService: ProductoService) {
+    }
+
+    ngOnInit() {
+        this._productoService.cargarProductos().subscribe( (resp: any) => {
+          this.productos = resp;
+          console.log(resp);
+        });
+        this.simpleItems = [true, 'Two', 3];
+    }
+
+  
 
 
     
-
-    this.contartres().then(
-      mensaje => console.log('Termino!', mensaje)
-    )
-    .catch( error => console.error('Error en la promesa', error));
-  }
-
-  ngOnInit() {
-  }
-
-  contartres(): Promise<boolean> {
-    return  new Promise( (resolve, reject ) => {
-
-      let contador = 0;
-      
-      let intervalo = setInterval( () => {
-        
-        contador += 1;
-        console.log(contador);
-
-        if (contador === 3 ) {
-          resolve( true );
-          //reject( 'Simplente un error' );
-          clearInterval( intervalo );
-        }
-      }, 1000);
-
-    });
-
-
-    
-  }
 
 }
