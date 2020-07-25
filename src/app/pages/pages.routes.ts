@@ -16,6 +16,7 @@ import { ClientesComponent } from './clientes/clientes.component';
 import { CodigobarrasComponent } from './codigobarras/codigobarras.component';
 import { MisventasComponent } from './misventas/misventas.component';
 import { AdminGuard } from '../services/guards/admin.guard';
+import { DescuentosComponent } from './descuentos/descuentos.component';
 
 
 
@@ -31,12 +32,15 @@ const pagesRoutes: Routes = [
             { path: 'misventas', component: MisventasComponent, data: { titulo: 'Mis Ventas'} },
 
 
-            // Rutas de Administrador
+        // Rutas de Administrador
+            // Parametricas
             { path: 'categorias', canActivate: [ AdminGuard ], component: CategoriasComponent, data: { titulo: 'Categorías'} },
             { path: 'subcategorias', canActivate: [ AdminGuard ], component: SubCategoriasComponent, data: { titulo: 'Sub Categorías'} },
             { path: 'productos', canActivate: [ AdminGuard ], component: ProductosComponent, data: { titulo: 'Productos'} },
             { path: 'clientes', canActivate: [ AdminGuard ], component: ClientesComponent, data: { titulo: 'Clientes'} },
             { path: 'codigobarras', canActivate: [ AdminGuard ], component: CodigobarrasComponent, data: { titulo: 'Código de barras'} },
+            { path: 'descuentos', canActivate: [ AdminGuard ], component: DescuentosComponent, data: { titulo: 'Descuentos'} },
+        // Administración
             { path: 'usuarios', canActivate: [ AdminGuard ], component: UsuariosComponent, data: { titulo: 'Usuarios'} },
             { path: 'reportes', canActivate: [ AdminGuard ], component: ReportesComponent, data: { titulo: 'Reportes'} },
             /* { path: 'progress', component: ProgressComponent, data: { titulo: 'Progress'} },

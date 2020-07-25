@@ -11,6 +11,7 @@ import { SettingsService,
          BuscadorService,
          ProductoService,
          ClienteService,
+         DescuentoService,
          TipoDocumentoService } from './service.index';
 
 
@@ -32,6 +33,7 @@ import { SettingsService,
     SubCategoriaService,
     ProductoService,
     ClienteService,
+    DescuentoService,
     TipoDocumentoService
   ]
 })

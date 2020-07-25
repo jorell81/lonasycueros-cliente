@@ -31,6 +31,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ClientesComponent } from './clientes/clientes.component';
 import { CodigobarrasComponent } from './codigobarras/codigobarras.component';
 import { MisventasComponent } from './misventas/misventas.component';
+import { DescuentosComponent } from './descuentos/descuentos.component';
 
 
 
@@ -53,7 +54,8 @@ import { MisventasComponent } from './misventas/misventas.component';
         ClientesComponent,
         MonedaPipe,
         CodigobarrasComponent,
-        MisventasComponent
+        MisventasComponent,
+        DescuentosComponent
     ],
     exports: [
         CategoriasComponent,

@@ -25,6 +25,7 @@ export class UsuariosComponent implements OnInit {
   mostrarContrasena: boolean = false;
   mostrarCheck: boolean = false;
   mostrarActivo: boolean = false;
+  mostrarSinResultado: boolean = false
   roles = [
     { nombre: 'Administrador', value: 'ADMIN_ROLE'},
     { nombre: 'Vendedor', value: 'USER_ROLE'}
@@ -204,13 +205,18 @@ export class UsuariosComponent implements OnInit {
         if (resp.usuario.length > 0) {
             this.usuarios = resp.usuario;
             this.cantBusqueda = resp.usuario.length;
+            this.mostrarSinResultado = false;
         } else {
-          this.cargarUsuarios();
           this.cantBusqueda = 0;
+          this.mostrarSinResultado = true;
+          this.usuarios = [];
         }
       });
-    } else {
+    } else if ( termino === '') {
+      document.getElementById('buscador').blur();
+      console.log('object');
       this.cantBusqueda = 0;
+      this.mostrarSinResultado = false;
       this.cargarUsuarios();
     }
   }

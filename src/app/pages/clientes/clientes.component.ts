@@ -39,28 +39,28 @@ export class ClientesComponent implements OnInit {
 
   get nombreNoValido() { return this.forma.get('nombre'); }
   get apellidoNoValido() { return this.forma.get('apellido'); }
-  get tipoDocumentoNoValido() { return this.forma.get('tipoDocumento'); }
-  get numIdenNoValido() { return this.forma.get('numeroIdentificacion'); }
+  get tipoDocumentoNoValido() { return this.forma.get('idTipoDocumento'); }
+  get numDocNoValido() { return this.forma.get('numeroDocumento'); }
   get telefonoNoValido() { return this.forma.get('telefono'); }
 
   crearFormulario(){
     this.forma = this.fb.group({
-      _id: null,
+      idCliente: null,
       nombre: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       apellido: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      tipoDocumento: [null, Validators.required],
-      numeroIdentificacion: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(12)]],
+      idTipoDocumento: [null, Validators.required],
+      numeroDocumento: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(12)]],
       telefono: [null, [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
     });
   }
 
   resetFormulario(){
     this.forma.reset({
-      _id: null,
+      idCliente: null,
       nombre: null,
       apellido: null,
-      tipoDocumento: null,
-      numeroIdentificacion: null,
+      idTipoDocumento: null,
+      numeroDocumento: null,
       telefono: null,
     });
   }
@@ -84,7 +84,7 @@ export class ClientesComponent implements OnInit {
       });
       return false;
     }
-    this._clienteService[data._id !== null ? 'actualizarCliente' : 'crearCliente'](data).subscribe((resp: any) => {
+    this._clienteService[data.idCliente !== null ? 'actualizarCliente' : 'crearCliente'](data).subscribe((resp: any) => {
       this.cargarClientes();
       this.flip = !this.flip;
       this.resetFormulario();
@@ -111,33 +111,16 @@ export class ClientesComponent implements OnInit {
     console.log($this);
     this.flip = !this.flip;
     this.forma.setValue({
-      _id: $this._id,
+      idCliente: $this.idCliente,
       nombre: $this.nombre,
       apellido: $this.apellido,
-      tipoDocumento: $this.tipoDocumento._id,
-      numeroIdentificacion: $this.numeroIdentificacion,
+      idTipoDocumento: $this.idTipoDocumento,
+      numeroDocumento: $this.numeroDocumento,
       telefono: $this.telefono
     });
   }
 
-  eliminarCliente($this){
-    Swal.fire({
-      title: 'Confirmación',
-      text: 'Eliminara el cliente ' + $this.nombre + ' ' + $this.apellido,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.value) {
-        this._clienteService.eliminarCliente( $this._id ).subscribe( resp => {
-          this.cargarClientes();
-        });
-      }
-    });
-  }
+  
 
   regresar(){
     if (this.forma.dirty) {
@@ -160,12 +143,29 @@ export class ClientesComponent implements OnInit {
     }
   }
 
-  
-
   cargarTipoDocumentos(){
     this._tipoDocumentoService.consultarTipoDocumentos().subscribe( (tipoDocumento: any) => {
       this.tipoDocumentos = tipoDocumento;
     });
   }
+
+  /* eliminarCliente($this){
+    Swal.fire({
+      title: 'Confirmación',
+      text: 'Eliminara el cliente ' + $this.nombre + ' ' + $this.apellido,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.value) {
+        this._clienteService.eliminarCliente( $this.idCliente ).subscribe( resp => {
+          this.cargarClientes();
+        });
+      }
+    });
+  } */
 
 }

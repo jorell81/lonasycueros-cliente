@@ -72,6 +72,7 @@
         "object-literal-sort-keys": false,
         "ordered-imports": false,
         "one-line": false,
+        "one-variable-per-declaration": false,
         "quotemark": [
             true,
             "single"

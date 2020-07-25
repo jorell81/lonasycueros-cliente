@@ -55,6 +55,7 @@ export class UsuarioService {
 
   // Funcion que recibe el email y la contraseña para poder loguearse
   login( usuario: Usuario, recordar: boolean = false){
+    document.getElementById('spinner').style.display = 'initial';
     return this.http.post( `${ this.base_url }/login`, usuario).pipe(map((resp: any) => {
       sessionStorage.setItem('token', resp.token);
       sessionStorage.setItem('menu', JSON.stringify(resp.menu));
@@ -65,6 +66,7 @@ export class UsuarioService {
       }
       return true;
     }), catchError( err => {
+      document.getElementById('spinner').className = 'preload fadeOut';
       Swal.fire('Error en el login', err.error.msg, 'error');
       return throwError(err);
     }));

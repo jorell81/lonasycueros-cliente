@@ -6,56 +6,52 @@ import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Cliente } from '../../models/cliente.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClienteService {
 
+  base_url = environment.base_url;
+  token: string;
+  headers = {};
+
   constructor(
     public http: HttpClient,
     public _usuarioService: UsuarioService
-  ) { }
+  ) {
+    this.token = _usuarioService.token;
+    this.headers = _usuarioService.headers;
+   }
 
   cargarClientes(){
-    let url = URL_SERVICIOS + '/cliente';
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.get( url ).pipe( map( (resp: any) => {
+    const url = `${ this.base_url}/clientes`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
       return resp.clientes;
-    }), catchError(err => {
-      Swal.fire('Error al consultar clientes', err.error.mensaje, 'error');
-      return throwError(err);
     }));
   }
 
   crearCliente(cliente: Cliente){
-    let url = URL_SERVICIOS + '/cliente';
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.post( url, cliente).pipe( map( (resp: any) => {
-      Swal.fire('Cliente creado', resp.cliente.nombre + ' ' + resp.cliente.apellido , 'success');
-      return resp.cliente;
-    }), catchError(err => {
-      Swal.fire('Error al crear cliente', err.error.mensaje, 'error');
+    return this.http.post(`${ this.base_url }/clientes`, cliente, this.headers).pipe( map( resp => {
+      console.log(resp);
+      Swal.fire('Crear Cliente', 'Cliente creado con exito', 'success');
+    }), catchError( err => {
+      Swal.fire('Error al crear Cliente', err.error.mensaje, 'error');
       return throwError(err);
     }));
   }
 
   actualizarCliente( cliente: Cliente ){
-    let url = URL_SERVICIOS + '/cliente/' + cliente._id;
-    url += '?token=' + this._usuarioService.token;
-
-    return this.http.put( url, cliente).pipe( map( (resp: any) => {
-      Swal.fire('Cliente actualizado', cliente.nombre + ' ' + cliente.apellido , 'success');
-      return resp.cliente;
-    }), catchError(err => {
-      Swal.fire('Error al actualizar cliente', err.error.mensaje, 'error');
+    return this.http.put(`${ this.base_url }/clientes/${cliente.idCliente}`, cliente, this.headers ).pipe( map( (resp: any) => {
+      Swal.fire('Actualizar Cliente', cliente.nombre + ' ' + cliente.apellido, 'success');
+    }), catchError( err => {
+      Swal.fire('Error al actualizar Cliente', err.error.mensaje, 'error');
       return throwError(err);
     }));
   }
 
-  eliminarCliente(id){
+  /* eliminarCliente(id){
     let url = URL_SERVICIOS + '/cliente/' + id;
     url += '?token=' + this._usuarioService.token;
     return this.http.delete( url ).pipe( map( (resp: any) => {
@@ -65,5 +61,5 @@ export class ClienteService {
       Swal.fire('Error al eliminar cliente', err.error.mensaje, 'error');
       return throwError(err);
     }));
-  }
+  } */
 }

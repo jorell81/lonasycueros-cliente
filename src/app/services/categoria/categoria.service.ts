@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Categoria } from '../../models/categoria.model';
-import { URL_SERVICIOS } from '../../config/config';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';

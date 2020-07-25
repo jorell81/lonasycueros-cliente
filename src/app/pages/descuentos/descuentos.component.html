@@ -20,7 +20,7 @@
                                             </div>
 
                                             <div class="col-lg-3 text-right">
-                                                <button (click)=agregarCliente() type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                                <button (click)=agregarDescuento() type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
                                                     <li class="fa fa-plus responsive"></li>
                                                     <li class="noresponsive"><i class="fa fa-plus"></i> Agregar</li>
                                                 </button>
@@ -28,23 +28,23 @@
 
                                         </div>
                                         <br>
-                                        <div *ngIf="clientes.length === 0" class="alert alert-info " role="alert ">
+                                        <div *ngIf="descuentos.length === 0 && !mostrarSinResultado" class="alert alert-info " role="alert ">
                                             <h4 class="alert-heading ">Clientes</h4>
                                             <p>No hay clientes almacenados. Por favor agregue clientes.</p>
                                         </div>
-                                        <div *ngIf="clientes.length > 0" class="table-responsive">
+                                        <div *ngIf="descuentos.length > 0 || mostrarSinResultado" class="table-responsive">
                                             <table class=" table table-hover ">
                                                 <thead class="thead-dark">
                                                     <tr>
                                                         <th scope="col" width="200px" class="text-center">Nombre</th>
-                                                        <th scope="col" class="text-center">Apellido</th>
-                                                        <th scope="col" class="text-center">Tipo Documento</th>
-                                                        <th scope="col" class="text-center">Número de Documento</th>
-                                                        <th scope="col" class="text-center">Teléfono</th>
+                                                        <th scope="col" class="text-center">Fecha Inicial</th>
+                                                        <th scope="col" class="text-center">Fecha Final</th>
+                                                        <th scope="col" class="text-center">Valor Descuento</th>
+                                                        <th scope="col" class="text-center">Producto</th>
                                                         <th scope="col" width="150px" class="text-center">Opciones</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody *ngIf="clientes.length > 0">
+                                                <tbody *ngIf="descuentos.length > 0 || mostrarSinResultado">
                                                     <tr>
                                                         <td colspan="6">
                                                             <div class="input-group" style="margin-bottom: 0;">
@@ -53,21 +53,29 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <tr *ngFor="let item of globales.Lista(clientes,pagina,itemsPagina)">
+                                                    <tr *ngIf="mostrarSinResultado">
+                                                        <td colspan="6">
+                                                            <div class="col-lg-12 alert alert-info mt-10 animated fadeIn" role="alert">
+                                                                <h4 class="alert-heading">Descuentos</h4>
+                                                                <p>No hay descuentos para la busqueda realizada.</p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngFor="let item of globales.Lista(descuentos,pagina,itemsPagina)">
                                                         <td class="text-center">{{ item.nombre}}</td>
-                                                        <td class="text-center">{{ item.apellido }}</td>
-                                                        <td class="text-center">{{ item.nombreTipoDocumento }}</td>
-                                                        <td class="text-center">{{ item.numeroDocumento }}</td>
-                                                        <td class="text-center">{{ item.telefono}}</td>
+                                                        <td class="text-center">{{ item.fechaInicio }}</td>
+                                                        <td class="text-center">{{ item.fechaFin }}</td>
+                                                        <td class="text-center">{{ item.valorDescuento }} %</td>
+                                                        <td class="text-center">{{ item.nombreProducto}}</td>
                                                         <td class="text-right">
-                                                            <button (click)="actualizarCliente( this.item )" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
+                                                            <button (click)="actualizarDescuento( this.item )" class="btn btn-primary m-r-10"><i class="fa fa-edit"></i></button>
                                                             <!-- <button (click)="eliminarCliente( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button> -->
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <ngb-pagination *ngIf="clientes.length > 0" [maxSize]="5" class="right" [collectionSize]="clientes.length" [(page)]="pagina" [pageSize]="itemsPagina">
+                                        <ngb-pagination *ngIf="descuentos.length > 0" [maxSize]="5" class="right" [collectionSize]="descuentos.length" [(page)]="pagina" [pageSize]="itemsPagina">
                                         </ngb-pagination>
                                     </div>
                                 </div>
@@ -92,11 +100,11 @@
                                 </button>
                             </div>
                         </div>
-                        <form [formGroup]="forma" (ngSubmit)="guardarCliente()">
+                        <form [formGroup]="forma" (ngSubmit)="guardarDescuento()">
                             <div class="form-body">
                                 <!--/row-->
                                 <div class="row">
-                                    <div class="col-md-6 ">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>Nombre</label>
                                             <input type="text" class="form-control" placeholder="Nombre" maxlength="31" formControlName="nombre" [class.is-invalid]="nombreNoValido.invalid && nombreNoValido.touched">
@@ -105,47 +113,51 @@
                                             <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 30 caracteres</small>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 ">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label>Apellido</label>
-                                            <input type="text" class="form-control" placeholder="Apellido" maxlength="31" formControlName="apellido" [class.is-invalid]="apellidoNoValido.invalid && apellidoNoValido.touched">
-                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.required && apellidoNoValido.touched" class="text-danger">El apellido es requerido</small>
-                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
-                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 30 caracteres</small>
+                                            <label>Valor Descuento</label>
+                                            <input type="number" class="form-control" placeholder="Valor Descuento" maxlength="10" min="0" formControlName="valorDescuento" [class.is-invalid]="vDescuentoNoValido.invalid && vDescuentoNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="vDescuentoNoValido.invalid && vDescuentoNoValido.errors.required && vDescuentoNoValido.touched" class="text-danger">El valor del descuento es requerido</small>
+                                            <small *ngIf="vDescuentoNoValido.invalid && vDescuentoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 caracteres</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+
+                                    <!--/span-->
+                                    <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label>Tipo de Documento</label>
-                                            <ng-select [items]="tipoDocumentos" placeholder="Tipo de Documento" bindLabel="nombre" bindValue="idTipoDocumento" formControlName="idTipoDocumento" [class.is-invalid]="tipoDocumentoNoValido.invalid && tipoDocumentoNoValido.touched">
+                                            <input class="form-control" type="date" formControlName="fechaInicio" [class.is-invalid]="fechaInicioNoValido.invalid && fechaInicioNoValido.touched">
+                                            <small *ngIf="fechaInicioNoValido.invalid && fechaInicioNoValido.errors.required && fechaInicioNoValido.touched" class="text-danger">La fecha inicial es requerida</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <input class="form-control" type="date" value="fechaActual" formControlName="fechaFin" [class.is-invalid]="fechaFinNoValido.invalid && fechaFinNoValido.touched">
+                                            <small *ngIf="fechaFinNoValido.invalid && fechaFinNoValido.errors.required && fechaFinNoValido.touched" class="text-danger">La fecha final es requerida</small>
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label>Descuento Para...</label>
+                                            <ng-select [items]="tipoDescuento" placeholder="Descuento Para..." bindLabel="valor" bindValue="id" (ngModelChange)="CambioSelect($event)" formControlName="tipoDescuento" [class.is-invalid]="tipoDescuentoNoValido.invalid && tipoDescuentoNoValido.touched">
                                             </ng-select>
-                                            <small *ngIf="tipoDocumentoNoValido.invalid && tipoDocumentoNoValido.errors.required && tipoDocumentoNoValido.touched" class="text-danger ">El campo Tipo Documento es requerido</small>
+                                            <small *ngIf="tipoDescuentoNoValido.invalid && tipoDescuentoNoValido.errors.required && tipoDescuentoNoValido.touched" class="text-danger ">El campo Descuento Para... es requerido</small>
                                         </div>
                                     </div>
-                                    <!--/span-->
-                                    <div class="col-md-6">
+                                    <div class="col-lg-6 animated fadeIn" *ngIf="mostrarProductos">
                                         <div class="form-group">
-                                            <label>Número de Documento</label>
-                                            <input type="number" class="form-control" placeholder="Número de Documento" maxlength="12" min="0" formControlName="numeroDocumento" [class.is-invalid]="numDocNoValido.invalid && numDocNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
-                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.required && numDocNoValido.touched" class="text-danger">El campo Número de Documento es requerido</small>
-                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
-                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 12 dígitos</small>
-                                        </div>
-                                    </div>
-                                    <!--/span-->
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Teléfono</label>
-                                            <input type="number" class="form-control" placeholder="Teléfono" maxlength="10" min="0" formControlName="telefono" [class.is-invalid]="telefonoNoValido.invalid && telefonoNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
-                                            <small *ngIf="telefonoNoValido.invalid && telefonoNoValido.errors.required && telefonoNoValido.touched" class="text-danger">El campo Teléfono es requerido</small>
-                                            <small *ngIf="telefonoNoValido.invalid && telefonoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 caracteres</small>
+                                            <label>Productos</label>
+                                            <ng-select [items]="productos" placeholder="Seleccione un producto..." bindLabel="nombre" bindValue="idProducto" formControlName="idProducto" [class.is-invalid]="idProductoNoValido.invalid && idProductoNoValido.touched">
+                                            </ng-select>
+                                            <small *ngIf="idProductoNoValido.invalid && idProductoNoValido.errors.required && idProductoNoValido.touched" class="text-danger ">El campo Producto es requerido</small>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <button type="submit " class="btn btn-primary ">Guardar</button>
                         </form>
