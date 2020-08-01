@@ -62,7 +62,23 @@ export class DescuentosComponent implements OnInit {
       valorDescuento: [null, [Validators.required]],
       idProducto: [null, [Validators.required]],
       tipoDescuento: [null, [Validators.required]],
-    });
+    }, { validators: this.verificarfechas('fechaInicio', 'fechaFin')});
+  }
+
+  verificarfechas( fechaInicio: string, fechaFin: string){
+
+    return ( group: FormGroup) => {
+
+      let fechaInicial = group.controls[fechaInicio].value;
+      let fechaFinal = group.controls[fechaFin].value;
+
+      if (fechaInicial <= fechaFinal) {
+        return null;
+      }
+      return {
+        problemaFechas : true
+      };
+    };
   }
 
   resetFormulario() {
@@ -80,6 +96,7 @@ export class DescuentosComponent implements OnInit {
 
   cargarDescuentos() {
     this._descuentoService.cargarDescuentos().subscribe( descuentos => {
+      console.log(descuentos);
       this.descuentos = descuentos;
     });
   }
@@ -130,9 +147,6 @@ export class DescuentosComponent implements OnInit {
         return false;
       }
     }
-    /* if (data.IdUsuario == null && this.mostrarProductos) {
-      this.config.MostrarNotificacion(new _Mensaje('Por favor seleccione un vendedor', Estilo.Alerta));
-    } */
     console.log(this.forma.value);
     if (data.idProducto !== null ) {
       this._descuentoService[data.idDescuento !== null ? 'actualizarDescuento' : 'crearDescuento'](data).subscribe((resp: any) => {

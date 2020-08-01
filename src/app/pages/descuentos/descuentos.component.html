@@ -127,16 +127,21 @@
                                     <!--/span-->
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label>Fecha Inicial Descuento</label>
                                             <input class="form-control" type="date" formControlName="fechaInicio" [class.is-invalid]="fechaInicioNoValido.invalid && fechaInicioNoValido.touched">
                                             <small *ngIf="fechaInicioNoValido.invalid && fechaInicioNoValido.errors.required && fechaInicioNoValido.touched" class="text-danger">La fecha inicial es requerida</small>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <label>Fecha Final Descuento</label>
                                             <input class="form-control" type="date" value="fechaActual" formControlName="fechaFin" [class.is-invalid]="fechaFinNoValido.invalid && fechaFinNoValido.touched">
                                             <small *ngIf="fechaFinNoValido.invalid && fechaFinNoValido.errors.required && fechaFinNoValido.touched" class="text-danger">La fecha final es requerida</small>
+                                            <small *ngIf="forma.errors?.problemaFechas && fechaFinNoValido.dirty" class="text-danger animated fadeIn fast">La fecha inicial no puede ser mayor a la fecha final.</small>
                                         </div>
+
                                     </div>
+
                                     <!--/span-->
                                 </div>
                                 <div class="row">

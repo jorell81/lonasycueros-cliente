@@ -19,6 +19,7 @@ import { MonedaPipe } from '../pipes/formatos.pipe';
 // temporal
 import { IncrementadorComponent } from '../components/incrementador/incrementador.component';
 import { GraficoDonaComponent } from '../components/grafico-dona/grafico-dona.component';
+import { LoadingComponent } from '../components/loading/loading.component';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { PromesasComponent } from './promesas/promesas.component';
 import { CategoriasComponent } from './categorias/categorias.component';
@@ -42,6 +43,7 @@ import { DescuentosComponent } from './descuentos/descuentos.component';
         Graficas1Component,
         IncrementadorComponent,
         GraficoDonaComponent,
+        LoadingComponent,
         AccountSettingsComponent,
         PromesasComponent,
         CategoriasComponent,

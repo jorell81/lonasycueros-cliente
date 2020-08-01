@@ -88,6 +88,13 @@ export class UsuarioService {
     }));
   }
 
+  consultarUsuarioxEmail(email: string){
+    const url = `${ this.base_url}/usuarios/${email}`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.usuario;
+    }));
+  }
+
   crearUsuario(usuario: Usuario){
     return this.http.post(`${ this.base_url }/usuarios`, usuario, this.headers).pipe( map( resp => {
       console.log(resp);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Cliente } from '../../models/cliente.model';
 import { Globales } from '../../config/globales';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -13,6 +13,9 @@ import Swal from 'sweetalert2';
 })
 export class ClientesComponent implements OnInit {
 
+  @Input() public clienteVenta = false;
+  @Input() public numeroCliente: string = '';
+  @Output() public onSelect = new EventEmitter();
   flip: boolean = false;
   pagina = 1;
   itemsPagina = 10;
@@ -20,6 +23,7 @@ export class ClientesComponent implements OnInit {
   forma: FormGroup;
   clientes: Cliente[] = [];
   tipoDocumentos: TipoDocumento[] = [];
+  mostrarSinResultado: boolean = false;
 
   constructor(
     public globales: Globales,
@@ -30,9 +34,13 @@ export class ClientesComponent implements OnInit {
   ) { 
     this.crearFormulario();
     this.resetFormulario();
+    
   }
 
   ngOnInit() {
+    if (this.clienteVenta) {
+      this.agregarCliente();
+    }
     this.cargarClientes();
     this.cargarTipoDocumentos();
   }
@@ -54,13 +62,13 @@ export class ClientesComponent implements OnInit {
     });
   }
 
-  resetFormulario(){
+  resetFormulario(numeroDocumento = null){
     this.forma.reset({
       idCliente: null,
       nombre: null,
       apellido: null,
       idTipoDocumento: null,
-      numeroDocumento: null,
+      numeroDocumento: numeroDocumento,
       telefono: null,
     });
   }
@@ -73,7 +81,7 @@ export class ClientesComponent implements OnInit {
 
   agregarCliente(){
     this.flip = !this.flip;
-    this.resetFormulario();
+    this.resetFormulario(this.numeroCliente);
   }
 
   guardarCliente(){
@@ -87,6 +95,10 @@ export class ClientesComponent implements OnInit {
     this._clienteService[data.idCliente !== null ? 'actualizarCliente' : 'crearCliente'](data).subscribe((resp: any) => {
       this.cargarClientes();
       this.flip = !this.flip;
+      if (this.clienteVenta) {
+        data.idCliente = resp;
+        this.onSelect.emit(data);
+      }
       this.resetFormulario();
     });
   }
@@ -97,12 +109,16 @@ export class ClientesComponent implements OnInit {
         if (resp.cliente.length > 0) {
             this.clientes = resp.cliente;
             this.cantBusqueda = resp.cliente.length;
+            this.mostrarSinResultado = false;
         } else {
           this.cantBusqueda = 0;
+          this.mostrarSinResultado = true;
+          this.clientes = [];
         }
       });
-    } else {
+    } else if ( termino === '') {
       this.cantBusqueda = 0;
+      this.mostrarSinResultado = false;
       this.cargarClientes();
     }
   }
@@ -135,10 +151,16 @@ export class ClientesComponent implements OnInit {
         cancelButtonText: 'No',
       }).then((result) => {
         if (result.value) {
+          if (this.clienteVenta) {
+            return this.onSelect.emit(null);
+          }
           this.flip = !this.flip;
         }
       });
     } else {
+      if (this.clienteVenta) {
+        return this.onSelect.emit(null);
+      }
       this.flip = !this.flip;
     }
   }

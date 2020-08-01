@@ -23,6 +23,7 @@ export class CategoriasComponent implements OnInit {
   cantBusqueda: number = 0;
   botonOculto: boolean = true; // mantiene oculto el boton de cerrar el modal
   mostrarEstado: boolean = false;
+  mostrarSinResultado: boolean = false;
   
 
   constructor(
@@ -156,13 +157,16 @@ export class CategoriasComponent implements OnInit {
         if (resp.categoria.length > 0) {
             this.categorias = resp.categoria;
             this.cantBusqueda = resp.categoria.length;
+            this.mostrarSinResultado = false;
         } else {
-          this.cargarCategorias();
           this.cantBusqueda = 0;
+          this.mostrarSinResultado = true;
+          this.categorias = [];
         }
       });
-    } else {
+    } else if ( termino === '') {
       this.cantBusqueda = 0;
+      this.mostrarSinResultado = false;
       this.cargarCategorias();
     }
   }

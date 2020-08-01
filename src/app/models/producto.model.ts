@@ -16,5 +16,6 @@ export class Producto {
         public genero: string,
         public estado: boolean,
         public fechaRegistro: string,
+        public valorDescuento: number
     ){}
 }

@@ -119,10 +119,11 @@ i {
 
 .btnOpciones {
     display: flex;
+    justify-content: center;
 }
 
 
-/*HArold*/
+/*Harold*/
 
 .fadeIn {
     -webkit-animation: fadein 1s;
@@ -260,4 +261,16 @@ i {
     to {
         opacity: 0;
     }
+}
+
+.fw {
+    font-weight: 600;
+}
+
+.va {
+    vertical-align: unset !important;
+}
+
+.total {
+    font-size: 27px;
 }

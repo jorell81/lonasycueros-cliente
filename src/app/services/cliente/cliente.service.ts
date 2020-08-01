@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UsuarioService } from '../usuario/usuario.service';
-import { URL_SERVICIOS } from '../../config/config';
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -32,9 +31,16 @@ export class ClienteService {
     }));
   }
 
+  consultarClientexNumDocumento(numDocumento: string){
+    const url = `${ this.base_url}/clientes/${numDocumento}`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.cliente;
+    }));
+  }
+
   crearCliente(cliente: Cliente){
-    return this.http.post(`${ this.base_url }/clientes`, cliente, this.headers).pipe( map( resp => {
-      console.log(resp);
+    return this.http.post(`${ this.base_url }/clientes`, cliente, this.headers).pipe( map( (resp: any) => {
+      return resp.clientes;
       Swal.fire('Crear Cliente', 'Cliente creado con exito', 'success');
     }), catchError( err => {
       Swal.fire('Error al crear Cliente', err.error.mensaje, 'error');

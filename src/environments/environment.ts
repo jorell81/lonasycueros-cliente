@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  iva: 0.19,
   base_url: 'http://localhost:3000/api'
 };
 

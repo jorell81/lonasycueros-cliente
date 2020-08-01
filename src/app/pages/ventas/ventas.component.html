@@ -1,16 +1,176 @@
-<ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Hi there!</h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-        <p>Hello, World!</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Save</button>
-    </div>
-</ng-template>
+<ngx-flip [flip]="flip" class="ngflip">
+    <div front>
+        <div class="row animated fadeIn">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form [formGroup]="forma">
+                                            <div class="form-body">
+                                                <div class="row">
+                                                    <div class="col-lg-4 m-b-15">
+                                                        <div class="input-group">
+                                                            <input #inputCliente type="text" class="form-control" placeholder="Buscar Cliente.." [readOnly]="mostrarCliente" formControlName="nombreCliente" [class.is-invalid]="nombreClienteNoValido.invalid && nombreClienteNoValido.touched">
+                                                            <div *ngIf="!mostrarCliente" class="input-group-addon pointer" (click)="buscarCliente(inputCliente.value)"><i class="ti-search"></i></div><button *ngIf="mostrarCliente" type="button" (click)="borrarCliente()" class="btn btn-danger m-r-10"><i class="fa fa-eraser"></i></button>
+                                                        </div>
+                                                        <small *ngIf="nombreClienteNoValido.invalid && nombreClienteNoValido.errors.required && nombreClienteNoValido.touched" class="text-danger">El número de documento del cliente es requerido.</small>
+                                                    </div>
+                                                    <br>
+                                                    <div class="col-lg-4 m-b-15">
+                                                        <div class="input-group">
+                                                            <input type="number" class="form-control" (keyup.enter)="consultarProducto()" min="0" maxlength="16" placeholder="Buscar Producto..." id="barCode" formControlName="barCode" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                                            <div class="input-group-addon pointer" (click)="consultarProducto()"><i class="ti-search"></i></div>
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div class="col-lg-4">
+                                                        <div class="form-group">
+                                                            <ng-select [items]="usuarios" placeholder="Seleccione un vendedor" bindLabel="nombreyapellido" bindValue="idUsuario" formControlName="idUsuario" (ngModelChange)="CambioSelect($event)" [class.is-invalid]="usuarioNoValido.invalid && usuarioNoValido.touched">
+                                                            </ng-select>
+                                                            <small *ngIf="usuarioNoValido.invalid && usuarioNoValido.errors.required && usuarioNoValido.touched" class="text-danger ">El vendedor es requerido</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
 
-<button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
+                                        <br>
+                                        <div *ngIf="alertCliente && nombreClienteNoValido.valid" class="col-lg-12 alert alert-info mt-10 animated fadeIn" role="alert">
+                                            <h4 class="alert-heading">Clientes</h4>
+                                            <p>este cliente no existe. ¿ Desea registrar este cliente. ?
+                                                <button (click)="registrarCliente()" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10"><i class="fa fa-check"></i> Si</button>
+                                                <button (click)="cerrarAlert()" class="btn btn-rounded btn-inverse waves-effect waves-light"><i class="fa fa-window-close"></i> No</button>
+                                            </p>
+                                        </div>
+                                        <br>
+
+                                        <div class="table-responsive">
+                                            <table class=" table table-hover table-sm table-bordered">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th scope="col" width="200px" class="text-center">Nombre</th>
+                                                        <th scope="col" class="text-center">Codigo</th>
+                                                        <th scope="col" class="text-center">Valor</th>
+                                                        <th scope="col" class="text-center">Iva</th>
+                                                        <th scope="col" class="text-center">Descuento</th>
+                                                        <th scope="col" class="text-center">V/Descuento</th>
+                                                        <th scope="col" class="text-center">Cantidad</th>
+                                                        <th scope="col" class="text-center">Sub Total</th>
+                                                        <th scope="col" width="150px" class="text-center">Opciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let item of productosVenta">
+                                                        <td class="text-center fw va">{{ item.nombre}}</td>
+                                                        <td class="text-center fw va">{{ item.codigoBarras }}</td>
+                                                        <td class="text-center fw va">{{ item.valorSalida | currency }}</td>
+                                                        <td class="text-center fw va">{{ item.iva | currency}}</td>
+                                                        <td class="text-center fw va">{{ item.descuento }} %</td>
+                                                        <td class="text-center fw va">{{ item.valorDescuento | currency }}</td>
+                                                        <td class="text-center fw va" style="width: 80px;">
+                                                            {{ item.cantidad }}
+                                                        </td>
+                                                        <td class="text-center fw va">{{ item.subTotal | currency}}</td>
+                                                        <td class="text-center btnOpciones">
+                                                            <button (click)="removerUnProducto( this.item )" class="btn btn-primary m-r-10"><i class="fa fa-minus"></i></button>
+                                                            <button (click)="removerProducto( this.item )" class="btn btn-danger m-r-10"><i class="fa fa-trash-o"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="fw total text-right">
+                                                Total: {{ totalVenta | currency }}
+                                            </div>
+                                            <br>
+                                            <div class="text-right" *ngIf="productosVenta.length > 0">
+                                                <button (click)="CrearFacturaVenta()" class="btn btn-primary">Guardar Venta</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div back>
+        <app-clientes *ngIf="clienteVenta" [clienteVenta]="true" [numeroCliente]="numCliente" (onSelect)="SeleccionarCliente($event)"></app-clientes>
+        <!-- <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-lg-12 text-right">
+                                <button (click)="regresar()" type="button" class="btn btn-rounded btn-primary waves-effect waves-light m-r-10">
+                                    <li class="fa fa-arrow-left responsive"></li>
+                                    <li class="noresponsive"><i class="fa fa-arrow-left"></i> Regresar</li>
+                                </button>
+                            </div>
+                        </div>
+                        <form [formGroup]="forma" (ngSubmit)="guardarCliente()">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>Nombre</label>
+                                            <input type="text" class="form-control" placeholder="Nombre" maxlength="31" formControlName="nombre" [class.is-invalid]="nombreNoValido.invalid && nombreNoValido.touched">
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.required && nombreNoValido.touched" class="text-danger">El campo Nombre es requerido</small>
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.minlength" class="text-danger ">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="nombreNoValido.invalid && nombreNoValido.errors.maxlength" class="text-danger ">La longitud maxima del campo es de 30 caracteres</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>Apellido</label>
+                                            <input type="text" class="form-control" placeholder="Apellido" maxlength="31" formControlName="apellido" [class.is-invalid]="apellidoNoValido.invalid && apellidoNoValido.touched">
+                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.required && apellidoNoValido.touched" class="text-danger">El apellido es requerido</small>
+                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="apellidoNoValido.invalid && apellidoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 30 caracteres</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Tipo de Documento</label>
+                                            <ng-select [items]="tipoDocumentos" placeholder="Tipo de Documento" bindLabel="nombre" bindValue="idTipoDocumento" formControlName="idTipoDocumento" [class.is-invalid]="tipoDocumentoNoValido.invalid && tipoDocumentoNoValido.touched">
+                                            </ng-select>
+                                            <small *ngIf="tipoDocumentoNoValido.invalid && tipoDocumentoNoValido.errors.required && tipoDocumentoNoValido.touched" class="text-danger ">El campo Tipo Documento es requerido</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Número de Documento</label>
+                                            <input type="number" class="form-control" placeholder="Número de Documento" maxlength="12" min="0" formControlName="numeroDocumento" [class.is-invalid]="numDocNoValido.invalid && numDocNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.required && numDocNoValido.touched" class="text-danger">El campo Número de Documento es requerido</small>
+                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.minlength" class="text-danger">La longitud mínima del campo es de 3 caracteres</small>
+                                            <small *ngIf="numDocNoValido.invalid && numDocNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 12 dígitos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Teléfono</label>
+                                            <input type="number" class="form-control" placeholder="Teléfono" maxlength="10" min="0" formControlName="telefono" [class.is-invalid]="telefonoNoValido.invalid && telefonoNoValido.touched" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                            <small *ngIf="telefonoNoValido.invalid && telefonoNoValido.errors.required && telefonoNoValido.touched" class="text-danger">El campo Teléfono es requerido</small>
+                                            <small *ngIf="telefonoNoValido.invalid && telefonoNoValido.errors.maxlength" class="text-danger">La longitud maxima del campo es de 10 caracteres</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit " class="btn btn-primary ">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</ngx-flip>

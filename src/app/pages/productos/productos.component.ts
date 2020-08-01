@@ -24,6 +24,7 @@ export class ProductosComponent implements OnInit {
   categorias: Categoria[] = [];
   subcategorias: SubCategoria[] = [];
   mostrarActivo: boolean = false;
+  mostrarSinResultado: boolean = false;
 
   constructor(
     public globales: Globales,
@@ -164,12 +165,16 @@ export class ProductosComponent implements OnInit {
         if (resp.producto.length > 0) {
             this.productos = resp.producto;
             this.cantBusqueda = resp.producto.length;
+            this.mostrarSinResultado = false;
         } else {
           this.cantBusqueda = 0;
+          this.mostrarSinResultado = true;
+          this.productos = [];
         }
       });
-    } else {
+    } else if ( termino === '') {
       this.cantBusqueda = 0;
+      this.mostrarSinResultado = false;
       this.cargarProductos();
     }
   }

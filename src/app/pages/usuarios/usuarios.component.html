@@ -1,6 +1,6 @@
 <ngx-flip [flip]="flip" class="ngflip">
     <div front>
-        <div class="row">
+        <div class="row animated fadeIn">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
@@ -62,10 +62,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr *ngFor="let item of globales.Lista(usuarios,pagina,itemsPagina); let i = index">
-                                                        <td class="text-center">{{ item.nombre}}</td>
-                                                        <td class="text-center">{{ item.apellido}}</td>
-                                                        <td class="text-center">{{ item.email}}</td>
-                                                        <td class="text-center">
+                                                        <td class="text-center va">{{ item.nombre}}</td>
+                                                        <td class="text-center va">{{ item.apellido}}</td>
+                                                        <td class="text-center va">{{ item.email}}</td>
+                                                        <td class="text-center va">
                                                             <span *ngIf="item.rol !== 'USER_ROLE'" class="label labeltable label-light-success">Administrador</span>
                                                             <span *ngIf="item.rol === 'USER_ROLE'" class="label labeltable label-light-primary">Vendedor</span>
                                                         </td>

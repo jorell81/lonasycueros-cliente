@@ -32,6 +32,13 @@ export class ProductoService {
     }));
   }
 
+  consultarProductoxCodigoBarras(codigoBarras: string){
+    const url = `${ this.base_url}/productos/codigo/${codigoBarras}`;
+    return this.http.get( url, this.headers).pipe( map ( (resp: any) => {
+      return resp.producto;
+    }));
+  }
+
   crearProducto(producto: Producto){
     return this.http.post(`${ this.base_url }/productos`, producto, this.headers).pipe( map( resp => {
       console.log(resp);

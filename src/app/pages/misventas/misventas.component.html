@@ -1,1 +1,81 @@
-<p>misventas works!</p>
+<div class="row animated fadeIn">
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <form [formGroup]="forma" (ngSubmit)="consultarReporte()">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Fecha Inicial Reporte</label>
+                                    <input class="form-control" type="date" formControlName="fechaInicial" [class.is-invalid]="fechaInicioNoValido.invalid && fechaInicioNoValido.touched">
+                                    <small *ngIf="fechaInicioNoValido.invalid && fechaInicioNoValido.errors.required && fechaInicioNoValido.touched" class="text-danger">La fecha inicial es requerida</small>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Fecha Final Reporte</label>
+                                    <input class="form-control" type="date" formControlName="fechaFinal" [class.is-invalid]="fechaFinNoValido.invalid && fechaFinNoValido.touched">
+                                    <small *ngIf="fechaFinNoValido.invalid && fechaFinNoValido.errors.required && fechaFinNoValido.touched" class="text-danger">La fecha final es requerida</small>
+                                    <small *ngIf="forma.errors?.problemaFechas && fechaFinNoValido.dirty" class="text-danger animated fadeIn fast">La fecha inicial no puede ser mayor a la fecha final.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Consultar Reporte</button>
+                    <button *ngIf="btnLimpiarFormulario" (click)="limpiarFormulario()" type="button" class="btn btn-inverse btn-block">Limpiar Formulario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="cardReportes" class="col-lg-9 animated fadeIn">
+        <div class="card">
+            <div class="card-body">
+
+                <div *ngIf="reportes.length === 0" class="alert alert-info " role="alert ">
+                    <h4 class="alert-heading ">Reportes</h4>
+                    <p>No hay reportes para la consulta realizada. Por favor consulte nuevamente.</p>
+                </div>
+                <h3 *ngIf="reportes.length > 0" class="card-title">Reporte {{ titulo }}</h3>
+                <div *ngIf="reportes.length > 0" class="col-lg-12 text-right">
+                    <select class="form-control" style="width: auto" name="itemsPagina" [(ngModel)]="itemsPagina">
+                      <option [ngValue]="10">10 por pagina</option>
+                      <option [ngValue]="20">20 por pagina</option>
+                      <option [ngValue]="30">30 por pagina</option>
+                    </select>
+                    <br>
+                    <br>
+                </div>
+                <div *ngIf="reportes.length > 0" class="table-responsive">
+                    <table class=" table table-hover table-sm table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" class="text-center">Nombre Producto</th>
+                                <th scope="col" class="text-center">Nombre Vendedor</th>
+                                <th scope="col" class="text-center">Nombre Cliente</th>
+                                <th scope="col" class="text-center">Cantidad</th>
+                                <th scope="col" class="text-center">SubTotal</th>
+                                <th scope="col" class="text-center">Total</th>
+                                <th scope="col" class="text-center">Fecha Venta</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="reportes.length > 0 ">
+                            <tr *ngFor="let item of globales.Lista(reportes,pagina,itemsPagina)">
+                                <td class="text-center">{{ item.NombreProducto}}</td>
+                                <td class="text-center">{{ item.nombreyapellido }}</td>
+                                <td class="text-center">{{ item.nombreyapellidoCliente }}</td>
+                                <td class="text-center">{{ item.cantidad }}</td>
+                                <td class="text-center">{{ item.valorSubTotal}}</td>
+                                <td class="text-center">{{ item.valorTotalVenta}}</td>
+                                <td class="text-center">{{ item.fecharegistro}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-right" *ngIf="reportes.length > 0">
+                        <button (click)="descargarReporte(reportes)" class="btn btn-primary">Descargar Reporte</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

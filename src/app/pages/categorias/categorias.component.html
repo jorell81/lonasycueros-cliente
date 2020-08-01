@@ -27,11 +27,11 @@
 
                                 </div>
                                 <br>
-                                <div *ngIf="categorias.length === 0" class="alert alert-info " role="alert ">
+                                <div *ngIf="categorias.length === 0 && !mostrarSinResultado" class="alert alert-info " role="alert ">
                                     <h4 class="alert-heading ">CATEGORÍAS</h4>
                                     <p>No hay categorias almacenadas. Por favor agregue categorias.</p>
                                 </div>
-                                <div *ngIf="categorias.length > 0" class="table-responsive">
+                                <div *ngIf="categorias.length > 0 || mostrarSinResultado" class="table-responsive">
                                     <table class=" table table-hover ">
                                         <thead class="thead-dark">
                                             <tr>
@@ -41,7 +41,7 @@
                                                 <th scope="col " width="150px " class="text-center">Opciones</th>
                                             </tr>
                                         </thead>
-                                        <tbody *ngIf="categorias.length > 0">
+                                        <tbody *ngIf="categorias.length > 0 || mostrarSinResultado">
                                             <tr>
                                                 <td colspan="4">
                                                     <div class="input-group" style="margin-bottom: 0;">
@@ -50,10 +50,18 @@
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <tr *ngIf="mostrarSinResultado">
+                                                <td colspan="4">
+                                                    <div class="col-lg-12 alert alert-info mt-10 animated fadeIn" role="alert">
+                                                        <h4 class="alert-heading">Categorías</h4>
+                                                        <p>No hay categorías para la busqueda realizada.</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                             <tr *ngFor="let item of globales.Lista(categorias,pagina,itemsPagina)">
-                                                <td class="text-center">{{ item.nombre }}</td>
-                                                <td class="text-center">{{ item.descripcion}}</td>
-                                                <td class="text-center">
+                                                <td class="text-center va">{{ item.nombre }}</td>
+                                                <td class="text-center va">{{ item.descripcion}}</td>
+                                                <td class="text-center va">
                                                     <span *ngIf="item.estado" class="label labeltable label-light-info">Activa</span>
                                                     <span *ngIf="!item.estado" class="label labeltable label-light-warning">Inactiva</span>
                                                 </td>

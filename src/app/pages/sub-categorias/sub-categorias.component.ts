@@ -25,6 +25,7 @@ export class SubCategoriasComponent implements OnInit {
   cantBusqueda: number = 0;
   botonOculto: boolean = true;
   mostrarEstado: boolean = false;
+  mostrarSinResultado: boolean = false;
 
   constructor(
     @Inject(DOCUMENT) private _document,
@@ -170,13 +171,16 @@ export class SubCategoriasComponent implements OnInit {
         if (resp.subcategoria.length > 0) {
             this.subcategorias = resp.subcategoria;
             this.cantBusqueda = resp.subcategoria.length;
+            this.mostrarSinResultado = false;
         } else {
-          this.cargarSubCategorias();
           this.cantBusqueda = 0;
+          this.mostrarSinResultado = true;
+          this.subcategorias = [];
         }
       });
-    } else {
+    } else if ( termino === '') {
       this.cantBusqueda = 0;
+      this.mostrarSinResultado = false;
       this.cargarSubCategorias();
     }
   }

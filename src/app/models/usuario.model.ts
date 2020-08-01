@@ -9,6 +9,7 @@ export class Usuario {
         public contrasena: string,
         public rol?: 'ADMIN_ROLE' | 'USER_ROLE',
         public idUsuario?: string,
-        public estado?: boolean
+        public estado?: boolean,
+        public nombreyapellido?: string
     ){}
 }

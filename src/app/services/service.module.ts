@@ -12,6 +12,8 @@ import { SettingsService,
          ProductoService,
          ClienteService,
          DescuentoService,
+         VentaService,
+         ReporteService,
          TipoDocumentoService } from './service.index';
 
 
@@ -34,6 +36,8 @@ import { SettingsService,
     ProductoService,
     ClienteService,
     DescuentoService,
+    VentaService,
+    ReporteService,
     TipoDocumentoService
   ]
 })
